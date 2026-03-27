@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_dark">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto Mouse"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/autoMouseToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/title"
+                app:layout_constraintBottom_toBottomOf="@+id/title" />
+
+            <LinearLayout
+                android:id="@+id/settingsContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title">
+
+                <!-- Description -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Automatically move mouse and click while running in background"
+                    android:textColor="@color/card_text2"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="24dp" />
+
+                <!-- Move Interval Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/card_gray"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/moveIntervalLabel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Mouse Speed"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <TextView
+                            android:id="@+id/moveIntervalDesc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="milliseconds between movements"
+                            android:textColor="@color/card_text2"
+                            android:textSize="12sp"
+                            android:layout_marginTop="4dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/moveIntervalLabel" />
+
+                        <Button
+                            android:id="@+id/moveIntervalMinus"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="−"
+                            android:textSize="18sp"
+                            android:layout_marginTop="12dp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/moveIntervalDesc" />
+
+                        <EditText
+                            android:id="@+id/moveIntervalInput"
+                            android:layout_width="80dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@color/bg_dark"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/card_text2"
+                            android:text="50"
+                            android:gravity="center"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toEndOf="@+id/moveIntervalMinus"
+                            app:layout_constraintTop_toBottomOf="@+id/moveIntervalDesc" />
+
+                        <Button
+                            android:id="@+id/moveIntervalPlus"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="+"
+                            android:textSize="18sp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toEndOf="@+id/moveIntervalInput"
+                            app:layout_constraintTop_toBottomOf="@+id/moveIntervalDesc" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Click Interval Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/card_gray"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/clickIntervalLabel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Click Interval"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <TextView
+                            android:id="@+id/clickIntervalDesc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="milliseconds between clicks"
+                            android:textColor="@color/card_text2"
+                            android:textSize="12sp"
+                            android:layout_marginTop="4dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/clickIntervalLabel" />
+
+                        <Button
+                            android:id="@+id/clickIntervalMinus"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="−"
+                            android:textSize="18sp"
+                            android:layout_marginTop="12dp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/clickIntervalDesc" />
+
+                        <EditText
+                            android:id="@+id/clickIntervalInput"
+                            android:layout_width="80dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@color/bg_dark"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/card_text2"
+                            android:text="2000"
+                            android:gravity="center"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toEndOf="@+id/clickIntervalMinus"
+                            app:layout_constraintTop_toBottomOf="@+id/clickIntervalDesc" />
+
+                        <Button
+                            android:id="@+id/clickIntervalPlus"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="+"
+                            android:textSize="18sp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toEndOf="@+id/clickIntervalInput"
+                            app:layout_constraintTop_toBottomOf="@+id/clickIntervalDesc" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Max Distance Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/card_gray"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/maxDistanceLabel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Movement Distance"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <TextView
+                            android:id="@+id/maxDistanceDesc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="pixels per movement"
+                            android:textColor="@color/card_text2"
+                            android:textSize="12sp"
+                            android:layout_marginTop="4dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/maxDistanceLabel" />
+
+                        <Button
+                            android:id="@+id/maxDistanceMinus"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="−"
+                            android:textSize="18sp"
+                            android:layout_marginTop="12dp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/maxDistanceDesc" />
+
+                        <EditText
+                            android:id="@+id/maxDistanceInput"
+                            android:layout_width="80dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@color/bg_dark"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/card_text2"
+                            android:text="80"
+                            android:gravity="center"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toEndOf="@+id/maxDistanceMinus"
+                            app:layout_constraintTop_toBottomOf="@+id/maxDistanceDesc" />
+
+                        <Button
+                            android:id="@+id/maxDistancePlus"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="+"
+                            android:textSize="18sp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toEndOf="@+id/maxDistanceInput"
+                            app:layout_constraintTop_toBottomOf="@+id/maxDistanceDesc" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Duration Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="@color/card_gray"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/durationLabel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Duration (0 = unlimited)"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <TextView
+                            android:id="@+id/minutesTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Minutes"
+                            android:textColor="@color/card_text2"
+                            android:textSize="12sp"
+                            android:layout_marginTop="12dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/durationLabel" />
+
+                        <Button
+                            android:id="@+id/durationMinutesMinus"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:text="−"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/minutesTitle" />
+
+                        <EditText
+                            android:id="@+id/durationMinutesInput"
+                            android:layout_width="60dp"
+                            android:layout_height="36dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@color/bg_dark"
+                            android:textColor="@color/white"
+                            android:text="0"
+                            android:gravity="center"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toEndOf="@+id/durationMinutesMinus"
+                            app:layout_constraintTop_toBottomOf="@+id/minutesTitle" />
+
+                        <Button
+                            android:id="@+id/durationMinutesPlus"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:text="+"
+                            android:textSize="16sp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toEndOf="@+id/durationMinutesInput"
+                            app:layout_constraintTop_toBottomOf="@+id/minutesTitle" />
+
+                        <TextView
+                            android:id="@+id/secondsTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Seconds"
+                            android:textColor="@color/card_text2"
+                            android:textSize="12sp"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="8dp"
+                            app:layout_constraintStart_toEndOf="@+id/durationMinutesPlus"
+                            app:layout_constraintTop_toBottomOf="@+id/durationLabel" />
+
+                        <Button
+                            android:id="@+id/durationSecondsMinus"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:text="−"
+                            android:textSize="16sp"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginTop="8dp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toEndOf="@+id/durationMinutesPlus"
+                            app:layout_constraintTop_toBottomOf="@+id/secondsTitle" />
+
+                        <EditText
+                            android:id="@+id/durationSecondsInput"
+                            android:layout_width="60dp"
+                            android:layout_height="36dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
+                            android:background="@color/bg_dark"
+                            android:textColor="@color/white"
+                            android:text="0"
+                            android:gravity="center"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toEndOf="@+id/durationSecondsMinus"
+                            app:layout_constraintTop_toBottomOf="@+id/secondsTitle" />
+
+                        <Button
+                            android:id="@+id/durationSecondsPlus"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:text="+"
+                            android:textSize="16sp"
+                            android:backgroundTint="@color/white"
+                            app:layout_constraintStart_toEndOf="@+id/durationSecondsInput"
+                            app:layout_constraintTop_toBottomOf="@+id/secondsTitle" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Preset Buttons -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Quick Presets"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:spacing="8dp">
+
+                    <Button
+                        android:id="@+id/presetSlow"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:text="Slow"
+                        android:textColor="@color/bg_dark"
+                        android:backgroundTint="@color/white"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/presetNormal"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:text="Normal"
+                        android:textColor="@color/bg_dark"
+                        android:backgroundTint="@color/white"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/presetFast"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:text="Fast"
+                        android:textColor="@color/bg_dark"
+                        android:backgroundTint="@color/white"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</layout>

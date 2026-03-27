@@ -1,0 +1,27 @@
+package com.darusc.mousedroid
+
+import android.Manifest
+import android.bluetooth.BluetoothManager
+import android.content.Context
+import android.content.Context.BLUETOOTH_SERVICE
+import android.content.IntentFilter
+import android.os.Build
+import android.provider.Settings
+import androidx.annotation.RequiresPermission
+import com.darusc.mousedroid.networking.Connection.Mode
+
+
+@RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+fun getDeviceDetails(context: Context, connectionMode: Mode): String {
+    val manufacturer = Build.MANUFACTURER
+    val model = Build.MODEL
+
+    val deviceName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2) {
+        (context.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager).adapter.name
+    } else {
+        Settings.Secure.getString(context.contentResolver, "bluetooth_name")
+    }
+
+    val deviceDetails = "$manufacturer/$deviceName/$model/${connectionMode.ordinal}"
+    return deviceDetails
+}
