@@ -138,6 +138,31 @@ class Input: Fragment() {
                     }
                     return@setNavigationItemSelectedListener true
                 }
+                R.id.mode_media_log -> {
+                    val mediaLog = com.darusc.mousedroid.MediaButtonLogger.getMediaLog(requireContext())
+                    if (mediaLog == null) {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Media Button Log")
+                            .setMessage("No media button presses recorded")
+                            .setPositiveButton("OK") { _, _ -> }
+                            .show()
+                    } else {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Media Button Log (Most Recent First)")
+                            .setMessage(mediaLog)
+                            .setPositiveButton("Clear") { _, _ ->
+                                com.darusc.mousedroid.MediaButtonLogger.clearMediaLog(requireContext())
+                                MaterialAlertDialogBuilder(requireContext())
+                                    .setTitle("Media Button Log Cleared")
+                                    .setMessage("Cleared!")
+                                    .setPositiveButton("OK") { _, _ -> }
+                                    .show()
+                            }
+                            .setNegativeButton("Close") { _, _ -> }
+                            .show()
+                    }
+                    return@setNavigationItemSelectedListener true
+                }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true

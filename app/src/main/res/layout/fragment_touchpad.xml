@@ -166,27 +166,28 @@
                     app:tint="@color/white" />
 
                 <ImageButton
-                    android:id="@+id/btnReplay10"
+                    android:id="@+id/btnSeekBackward"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_margin="8dp"
                     android:background="@drawable/rounded_control"
                     android:onClick="@{viewmodel::onMediaButtonClick}"
-                    android:src="@drawable/ic_replay_10"
+                    android:src="@drawable/baseline_arrow_back_24"
                     android:scaleType="centerInside"
-                    android:contentDescription="Replay 10s"
+                    android:contentDescription="Seek Backward"
                     app:tint="@color/white" />
 
                 <ImageButton
-                    android:id="@+id/btnForward10"
+                    android:id="@+id/btnSeekForward"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_margin="8dp"
                     android:background="@drawable/rounded_control"
                     android:onClick="@{viewmodel::onMediaButtonClick}"
-                    android:src="@drawable/ic_forward_10"
+                    android:src="@drawable/baseline_arrow_back_24"
+                    android:rotation="180"
                     android:scaleType="centerInside"
-                    android:contentDescription="Forward 10s"
+                    android:contentDescription="Seek Forward"
                     app:tint="@color/white" />
             </LinearLayout>
 

@@ -115,10 +115,12 @@ class BluetoothConnection(
     /**
      * Non blocking queue of reports to be sent over the bluetooth connection
      */
+    private var mediaReportCount = 0
     private val reportChannel = Channel<Array<HIDReport>>(Channel.UNLIMITED)
     private val sendReportJob = CoroutineScope(Dispatchers.IO).launch {
         for (reports in reportChannel) {
-            for (report in reports) {
+            Log.d("Mousedroid", "Processing array of ${reports.size} reports")
+            for ((index, report) in reports.withIndex()) {
                 if (bluetoothHostDevice == null) {
                     Log.w("Mousedroid", "Cannot send ${report::class.simpleName} - not connected to host device")
                     continue
@@ -127,14 +129,32 @@ class BluetoothConnection(
                     Log.w("Mousedroid", "Cannot send ${report::class.simpleName} - HID device not initialized")
                     continue
                 }
+                
+                // Log detailed info for media reports
+                if (report is MediaReport) {
+                    mediaReportCount++
+                    val bytesStr = report.bytes.joinToString(", ") { byte -> 
+                        "0x" + (byte.toInt() and 0xFF).toString(16).uppercase().padStart(2, '0')
+                    }
+                    val isRelease = report.bytes[0] == 0.toByte()
+                    val eventType = if (isRelease) "RELEASE" else "PRESS"
+                    Log.d("Mousedroid", "[$mediaReportCount] Sending MediaReport $eventType (ID: ${report.id}): bytes=[$bytesStr]")
+                }
+                
                 val result = bluetoothHIDDevice?.sendReport(bluetoothHostDevice, report.id, report.bytes)
                 if (result == false) {
-                    Log.w("Mousedroid", "Failed to send ${report::class.simpleName} (ID: ${report.id})")
+                    Log.e("Mousedroid", "FAILED to send ${report::class.simpleName} (ID: ${report.id}), bytes: ${report.bytes.joinToString(", ") { "0x${(it.toInt() and 0xFF).toString(16).padStart(2, '0')}" }}")
+                } else if (result == true) {
+                    if (report is MediaReport) {
+                        Log.d("Mousedroid", "Successfully sent MediaReport")
+                    }
                 }
-                // Minimal delay only for keyboard to prevent flooding
-                // Removed delay for mouse reports to improve responsiveness
-                if (report is KeyboardReport) {
-                    delay(2)
+                
+                // Add delay for all control types to ensure proper delivery
+                when (report) {
+                    is KeyboardReport -> delay(2)
+                    is MediaReport -> delay(5)  // Slightly longer delay for media to ensure proper processing
+                    else -> {}
                 }
             }
         }

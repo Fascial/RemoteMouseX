@@ -142,7 +142,13 @@ fun InputEvent.toHIDReport(): Array<HIDReport> {
 
         is InputEvent.MediaEvent -> {
             val bitmask = getMediaActionHIDBitmask(this.action)
-            arrayOf(MediaReport(bitmask), MediaReport(0))
+            val byte0 = (bitmask.toInt() and 0xFF).toByte()
+            Log.d("Mousedroid", "MediaEvent: action=${this.action}, bitmask=0x${bitmask.toString(16).padStart(2, '0')}, byte=[0x${(byte0.toInt() and 0xFF).toString(16).padStart(2, '0')}]")
+            val pressReport = MediaReport(bitmask)
+            val releaseReport = MediaReport(0)
+            Log.d("Mousedroid", "Press Report byte: ${pressReport.bytes.joinToString(", ") { "0x${(it.toInt() and 0xFF).toString(16).padStart(2, '0')}" }}")
+            Log.d("Mousedroid", "Release Report byte: ${releaseReport.bytes.joinToString(", ") { "0x${(it.toInt() and 0xFF).toString(16).padStart(2, '0')}" }}")
+            arrayOf(pressReport, releaseReport)
         }
 
         is InputEvent.BatteryEvent -> {
