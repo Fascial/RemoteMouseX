@@ -108,10 +108,6 @@ class Input: Fragment() {
                     connectionViewModel.disconnect()
                     findNavController().navigateUp()
                 }
-                R.id.mode_change_layout -> {
-                    showLayoutSelectorDialog(item)
-                    return@setNavigationItemSelectedListener true
-                }
                 R.id.mode_crash_log -> {
                     val lastCrash = com.darusc.mousedroid.CrashLogger.getLastCrash(requireContext())
                     if (lastCrash == null) {
@@ -190,32 +186,6 @@ class Input: Fragment() {
             .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
             .replace(R.id.fragment_container, fragment)
             .commit()
-    }
-
-    private fun showLayoutSelectorDialog(menuItem: MenuItem) {
-        val layouts = keyboardViewModel.layouts.toTypedArray()
-
-        val currentLayoutIndex = layouts.indexOf(keyboardViewModel.activeKeyboardLayout.name)
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Select Keyboard Layout")
-            .setSingleChoiceItems(layouts, currentLayoutIndex) { dialog, which ->
-
-                val selectedLayoutName = layouts[which]
-                if (keyboardViewModel.setKeyboardLayout(selectedLayoutName)) {
-                    menuItem.title = "Layout: $selectedLayoutName"
-                } else {
-                    menuItem.title = "Layout"
-                }
-
-
-                dialog.dismiss()
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
     }
 
     private fun openSoftKeyboard() {

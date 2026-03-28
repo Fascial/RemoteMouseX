@@ -4,14 +4,13 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.darusc.mousedroid.BatteryMonitor
 import com.darusc.mousedroid.mkinput.InputEvent
 import com.darusc.mousedroid.networking.bluetooth.BluetoothConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ConnectionManager private constructor() : Connection.Listener, BatteryMonitor.Listener {
+class ConnectionManager private constructor() : Connection.Listener {
 
     private val TAG = "Mousedroid"
 
@@ -34,10 +33,6 @@ class ConnectionManager private constructor() : Connection.Listener, BatteryMoni
                 return instance!!
             }
         }
-    }
-    
-    init {
-        BatteryMonitor.getInstance().addListener(this)
     }
 
     private var connectionStateCallback: ConnectionStateCallback? = null
@@ -77,12 +72,6 @@ class ConnectionManager private constructor() : Connection.Listener, BatteryMoni
     override fun onDisconnected(connectionMode: Connection.Mode, hostName: String) {
         disconnect()
         connectionStateCallback?.onDisconnected(connectionMode, hostName)
-    }
-
-    override fun onBatteryPercentChanged(percentage: Int) {
-        if (connected) {
-            connection?.send(InputEvent.BatteryEvent(percentage))
-        }
     }
 
     /**

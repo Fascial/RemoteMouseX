@@ -48,14 +48,14 @@ class AutoMouse : Fragment() {
             }
             
             isEnabled = isChecked
-            binding.settingsContainer.visibility = if (isChecked) View.VISIBLE else View.GONE
             if (isChecked) {
                 updateServiceState()
             } else {
                 stopAutoMouse()
             }
         }
-        binding.settingsContainer.visibility = View.GONE
+        // Settings always visible regardless of toggle state
+        binding.settingsContainer.visibility = View.VISIBLE
 
         // Move interval controls
         setupNumberField(

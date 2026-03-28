@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         BluetoothAdapterWrapper.initialize(applicationContext)
-        //BatteryMonitor.getInstance().start(applicationContext)
     }
 
     override fun onRequestPermissionsResult(
@@ -67,6 +66,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        BatteryMonitor.getInstance().stop(applicationContext)
     }
 }

@@ -21,11 +21,6 @@
                     android:id="@+id/mode_automouse"
                     android:icon="@drawable/ic_touchpad"
                     android:title="Auto Mouse" />
-                <item
-                    android:id="@+id/mode_change_layout"
-                    android:icon="@drawable/ic_language"
-                    android:title="Layout: US English"
-                    android:checkable="false"/>
             </group>
         </menu>
     </item>
