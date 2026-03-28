@@ -38,9 +38,6 @@ class Touchpad : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Pass context to viewModel for logging
-        viewModel.setContext(requireContext())
-
         // Setup touchpad gesture listener and button listeners
         val gestureHandler = GestureHandler(requireContext()) { event ->
             viewModel.sendMouseEvent(event)

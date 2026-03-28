@@ -85,6 +85,21 @@ Or manually copy the APK file to your device and install through the file manage
    - **Duration**: How long to run (0 = infinite)
 5. Auto Mouse will run in the background as a service
 
+### Using Multimedia Controls
+
+1. Navigate to Touchpad mode
+2. Access multimedia controls in the "Multimedia Controls" section:
+   - **Previous** - Skip to previous track/chapter
+   - **Play/Pause** - Toggle playback
+   - **Next** - Skip to next track/chapter
+   - **Seek Backward (←)** - Rewind/seek backward (sends arrow left key press)
+   - **Seek Forward (→)** - Fast-forward/seek forward (sends arrow right key press)
+   - **Volume Down** - Decrease audio volume
+   - **Mute** - Toggle mute/unmute
+   - **Volume Up** - Increase audio volume
+3. All buttons provide haptic feedback (vibration) and visual highlighting on press
+4. Arrow seek buttons work universally with any media player that supports arrow key navigation
+
 ### Using Trackpad Recorder
 
 1. Ensure you're connected to a device
@@ -163,11 +178,19 @@ MouseBuster/
 1. **ConnectionManager** - Singleton managing Bluetooth connections (HID-only)
 2. **BluetoothConnection** - Handles HID communication via coroutines
 3. **AutoMouseService** - Background service for automated mouse control
-4. **InputEvent** - Defines mouse/keyboard events (MouseMove, MouseClick, KeyboardPress, MediaEvent)
-5. **CrashLogger** - Persistent crash logging to SharedPreferences
-6. **RecorderViewModel** - Manages recording/playback state with delta-timestamp compression
-7. **Recorder Fragment** - Dedicated UI for recording interactions and saving replays
-8. **RecordedEvent** - Serializable container for InputEvent + delta timing
+4. **InputEvent** - Defines input events including:
+   - MouseMove, MouseClick, MouseScroll (mouse input)
+   - KeyPress, NumpadKeyPress (keyboard input)
+   - MediaEvent (media controls: Play/Pause, Next, Previous, Volume, Seek)
+5. **TouchpadViewModel** - Manages touchpad input and multimedia control events
+   - Multimedia buttons with 8 action types (media control and seek)
+   - Vibration feedback (20ms) and visual click feedback for accessibility
+   - MediaButtonLogger for debugging button presses
+6. **MediaButtonLogger** - Debug utility for tracking multimedia button presses
+7. **CrashLogger** - Persistent crash logging to SharedPreferences
+8. **RecorderViewModel** - Manages recording/playback state with delta-timestamp compression
+9. **Recorder Fragment** - Dedicated UI for recording interactions and saving replays
+10. **RecordedEvent** - Serializable container for InputEvent + delta timing
 
 ### Threading Model
 
@@ -176,6 +199,21 @@ MouseBuster/
 - Handler/Looper: Scheduled mouse movement and clicks in AutoMouseService
 
 ## Recent Updates
+
+### Version 3.2 (March 28, 2026)
+
+- **Multimedia Controls Layout Redesign** - Fixed layout issues with media buttons
+  - Replaced ChipGroup with LinearLayout for proper click handling
+  - 8 media control buttons (Previous, Play/Pause, Next, Seek Backward, Seek Forward, Volume Down, Volume Up, Mute)
+  - Properly responds to all button clicks with immediate visual feedback
+- **Arrow Key Seek Implementation** - Added bidirectional seek controls
+  - **Seek Forward (→)** button sends right arrow key press (KEY_RIGHT, 0x4F)
+  - **Seek Backward (←)** button sends left arrow key press (KEY_LEFT, 0x50)
+  - More universal than media events - works with any video player or media application
+  - Includes vibration feedback (20ms) and visual button highlighting on click
+- **Development Workflow** - VS Code integration for fast USB deployment
+  - Configured Gradle tasks for rapid build-deploy cycle (~10-15 seconds)
+  - One-command access via `Ctrl+Shift+B` for seamless testing
 
 ### Version 3.1 (March 28, 2026)
 

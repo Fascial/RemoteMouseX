@@ -44,9 +44,6 @@
             <item
                 android:id="@+id/mode_crash_log"
                 android:title="View Crash Log"/>
-            <item
-                android:id="@+id/mode_media_log"
-                android:title="View Media Button Log"/>
         </menu>
     </item>
 </menu>
