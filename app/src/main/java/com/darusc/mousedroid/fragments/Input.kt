@@ -98,6 +98,11 @@ class Input: Fragment() {
                     closeSoftKeyboard()
                     replaceChildFragment(AutoMouse())
                 }
+                R.id.mode_recorder -> {
+                    item.isChecked = true
+                    closeSoftKeyboard()
+                    replaceChildFragment(Recorder())
+                }
                 R.id.mode_keyboard -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     openSoftKeyboard()

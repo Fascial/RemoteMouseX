@@ -2,7 +2,7 @@ package com.darusc.mousedroid.mkinput
 
 import com.darusc.mousedroid.layouts.KeyboardLayout
 
-sealed class InputEvent {
+sealed class InputEvent : java.io.Serializable {
 
     enum class MouseButton {
         LEFT,

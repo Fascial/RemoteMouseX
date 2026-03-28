@@ -21,6 +21,10 @@
                     android:id="@+id/mode_automouse"
                     android:icon="@drawable/ic_touchpad"
                     android:title="Auto Mouse" />
+                <item
+                    android:id="@+id/mode_recorder"
+                    android:icon="@drawable/ic_record"
+                    android:title="Trackpad Recorder" />
             </group>
         </menu>
     </item>

@@ -97,6 +97,9 @@ class Touchpad : Fragment() {
             // Remove all other buttons
             binding.title.visibility = View.GONE
             binding.mouseButtonsRow.visibility = View.GONE
+            // Remove all other buttons
+            binding.title.visibility = View.GONE
+            binding.mouseButtonsRow.visibility = View.GONE
             binding.btnToggleMedia.visibility = View.GONE
             binding.mediaControls.visibility = View.GONE
             binding.btnFullscreen.setIconResource(R.drawable.ic_fullscreen_exit)

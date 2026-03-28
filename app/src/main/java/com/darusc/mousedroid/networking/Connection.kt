@@ -5,8 +5,6 @@ import com.darusc.mousedroid.mkinput.InputEvent
 abstract class Connection {
 
     enum class Mode {
-        USB,
-        WIFI,
         BLUETOOTH
     }
 

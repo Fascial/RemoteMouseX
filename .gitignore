@@ -1,29 +1,38 @@
-# Gradle
-build
-app/build
-app/release
-.gradle
-gradlew.bat
-gradlew
+# Gradle build artifacts (but not the wrapper itself)
+build/
+app/build/
+app/release/
+.gradle/
+.kotlin/
 
-# Android
-.idea/
+# Android build output
 *.apk
 *.ap_
 *.dex
 *.class
 bin/
 gen/
+
+# Local configuration (user-specific)
 local.properties
 
-# Intellij
-*.iml
+# IDE files
 .idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+.vscode/
 *.swp
 *.swo
 
-# DS_Store
+# System and OS files
 .DS_Store
+.gradle_cache
+
+# Crash logs and JVM dumps
+*.log
+hs_err_pid*.log
+replay_pid*.log
 
 # Build artifacts
 *.o
@@ -32,7 +41,8 @@ local.properties
 *.dll
 *.pyc
 
-# IDE specific files
-.vscode/
-*.sublime-project
-*.sublime-workspace
+# Generated files
+.classpath
+.project
+.settings/
+*.class
