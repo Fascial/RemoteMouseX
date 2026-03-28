@@ -110,104 +110,130 @@
             app:layout_constraintBottom_toTopOf="@id/mediaControls"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <com.google.android.material.chip.ChipGroup
+        <LinearLayout
             android:id="@+id/mediaControls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
             android:gravity="center"
-            app:chipSpacingHorizontal="18dp"
-            app:chipSpacingVertical="18dp"
+            android:padding="12dp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:singleLine="false">
+            app:layout_constraintStart_toStartOf="parent">
 
-            <ImageButton
-                android:id="@+id/btnPrev"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                android:onClick="@{viewmodel::onMediaButtonClick}"
-                android:src="@drawable/ic_skip_previos"
-                app:tint="@color/white" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/btnPlayPause"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                android:onClick="@{viewmodel::onMediaButtonClick}"
-                android:src="@drawable/ic_play_pause"
-                app:tint="@color/white" />
+                <ImageButton
+                    android:id="@+id/btnPrev"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rounded_control"
+                    android:onClick="@{viewmodel::onMediaButtonClick}"
+                    android:src="@drawable/ic_skip_previos"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Previous"
+                    app:tint="@color/white" />
 
-            <ImageButton
-                android:id="@+id/btnNext"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                android:onClick="@{viewmodel::onMediaButtonClick}"
-                android:src="@drawable/ic_skip_next"
-                app:tint="@color/white" />
+                <ImageButton
+                    android:id="@+id/btnPlayPause"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rounded_control"
+                    android:onClick="@{viewmodel::onMediaButtonClick}"
+                    android:src="@drawable/ic_play_pause"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Play/Pause"
+                    app:tint="@color/white" />
 
-            <ImageButton
-                android:id="@+id/btnReplay10"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                android:onClick="@{viewmodel::onMediaButtonClick}"
-                android:src="@drawable/ic_replay_10"
-                app:tint="@color/white" />
+                <ImageButton
+                    android:id="@+id/btnNext"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rounded_control"
+                    android:onClick="@{viewmodel::onMediaButtonClick}"
+                    android:src="@drawable/ic_skip_next"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Next"
+                    app:tint="@color/white" />
 
-            <ImageButton
-                android:id="@+id/btnForward10"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                android:onClick="@{viewmodel::onMediaButtonClick}"
-                android:src="@drawable/ic_forward_10"
-                app:tint="@color/white" />
+                <ImageButton
+                    android:id="@+id/btnReplay10"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rounded_control"
+                    android:onClick="@{viewmodel::onMediaButtonClick}"
+                    android:src="@drawable/ic_replay_10"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Replay 10s"
+                    app:tint="@color/white" />
 
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                app:tint="@color/white" />
+                <ImageButton
+                    android:id="@+id/btnForward10"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rounded_control"
+                    android:onClick="@{viewmodel::onMediaButtonClick}"
+                    android:src="@drawable/ic_forward_10"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Forward 10s"
+                    app:tint="@color/white" />
+            </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btnVolDown"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                android:onClick="@{viewmodel::onMediaButtonClick}"
-                android:src="@drawable/ic_volume_down"
-                app:tint="@color/white" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/btnVolOff"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                android:onClick="@{viewmodel::onMediaButtonClick}"
-                android:src="@drawable/ic_volume_off"
-                app:tint="@color/white" />
+                <ImageButton
+                    android:id="@+id/btnVolDown"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rounded_control"
+                    android:onClick="@{viewmodel::onMediaButtonClick}"
+                    android:src="@drawable/ic_volume_down"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Volume Down"
+                    app:tint="@color/white" />
 
-            <ImageButton
-                android:id="@+id/btnVolUp"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                android:onClick="@{viewmodel::onMediaButtonClick}"
-                android:src="@drawable/ic_volume_up"
-                app:tint="@color/white" />
+                <ImageButton
+                    android:id="@+id/btnVolOff"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rounded_control"
+                    android:onClick="@{viewmodel::onMediaButtonClick}"
+                    android:src="@drawable/ic_volume_off"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Mute"
+                    app:tint="@color/white" />
 
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/rounded_control"
-                app:tint="@color/white" />
+                <ImageButton
+                    android:id="@+id/btnVolUp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rounded_control"
+                    android:onClick="@{viewmodel::onMediaButtonClick}"
+                    android:src="@drawable/ic_volume_up"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Volume Up"
+                    app:tint="@color/white" />
+            </LinearLayout>
 
-        </com.google.android.material.chip.ChipGroup>
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
