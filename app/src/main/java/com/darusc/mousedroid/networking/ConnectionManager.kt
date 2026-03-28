@@ -114,13 +114,30 @@ class ConnectionManager private constructor() : Connection.Listener, BatteryMoni
     }
 
     fun send(event: InputEvent, withCoroutine: Boolean = true) {
-        if (connection == null) {
-            return;
+        val isConnected = connection != null && connected
+        Log.d(TAG, "send() called: withCoroutine=$withCoroutine, connected=$isConnected, btConn=$btConn")
+        
+        if (!isConnected) {
+            Log.w(TAG, "send() - Not connected! event=$event, connection=$connection, connected=$connected")
+            return
         }
-
+        
         when (withCoroutine) {
-            false -> connection?.send(event)
-            true -> CoroutineScope(Dispatchers.IO).launch { connection?.send(event) }
+            false -> {
+                Log.d(TAG, "Sending synchronously: $event")
+                connection?.send(event)
+            }
+            true -> {
+                Log.d(TAG, "Sending asynchronously: $event")
+                CoroutineScope(Dispatchers.IO).launch { 
+                    Log.d(TAG, "Async send executing: $event")
+                    connection?.send(event) 
+                }
+            }
         }
+    }
+
+    fun isConnected(): Boolean {
+        return connected && connection != null
     }
 }

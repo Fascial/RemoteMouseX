@@ -39,4 +39,12 @@
                 android:iconTint="@color/design_default_color_error"/>
         </menu>
     </item>
+
+    <item android:title="Debug">
+        <menu>
+            <item
+                android:id="@+id/mode_crash_log"
+                android:title="View Crash Log"/>
+        </menu>
+    </item>
 </menu>

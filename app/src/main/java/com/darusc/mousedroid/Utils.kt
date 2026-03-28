@@ -4,7 +4,6 @@ import android.Manifest
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Context.BLUETOOTH_SERVICE
-import android.content.IntentFilter
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresPermission

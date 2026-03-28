@@ -63,17 +63,6 @@ class GestureHandler(
                 return true
             }
         })
-//    private val scaleDetector: ScaleGestureDetector =
-//        ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-//            override fun onScale(detector: ScaleGestureDetector): Boolean {
-//                val scale = (ln(detector.scaleFactor) * 500).toInt().coerceIn(-128, 127).toByte()
-//                if (!state.dragging) {
-//                    connectionManager.send(InputEvent.Zoom(scale.toInt()), true)
-//                }
-//
-//                return true
-//            }
-//        })
 
     /**
      * Detector used for gestures like: tap, double tap, move, drag and scroll

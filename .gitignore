@@ -1,4 +1,38 @@
+# Gradle
 build
 app/build
 app/release
 .gradle
+gradlew.bat
+gradlew
+
+# Android
+.idea/
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+local.properties
+
+# Intellij
+*.iml
+.idea/
+*.swp
+*.swo
+
+# DS_Store
+.DS_Store
+
+# Build artifacts
+*.o
+*.so
+*.exe
+*.dll
+*.pyc
+
+# IDE specific files
+.vscode/
+*.sublime-project
+*.sublime-workspace

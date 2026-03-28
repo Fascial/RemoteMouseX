@@ -112,6 +112,31 @@ class Input: Fragment() {
                     showLayoutSelectorDialog(item)
                     return@setNavigationItemSelectedListener true
                 }
+                R.id.mode_crash_log -> {
+                    val lastCrash = com.darusc.mousedroid.CrashLogger.getLastCrash(requireContext())
+                    if (lastCrash == null) {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Crash Log")
+                            .setMessage("No crashes recorded")
+                            .setPositiveButton("OK") { _, _ -> }
+                            .show()
+                    } else {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Last Crash Log")
+                            .setMessage(lastCrash)
+                            .setPositiveButton("Clear") { _, _ ->
+                                com.darusc.mousedroid.CrashLogger.clearCrashLog(requireContext())
+                                MaterialAlertDialogBuilder(requireContext())
+                                    .setTitle("Crash Log Cleared")
+                                    .setMessage("Cleared!")
+                                    .setPositiveButton("OK") { _, _ -> }
+                                    .show()
+                            }
+                            .setNegativeButton("Close") { _, _ -> }
+                            .show()
+                    }
+                    return@setNavigationItemSelectedListener true
+                }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true

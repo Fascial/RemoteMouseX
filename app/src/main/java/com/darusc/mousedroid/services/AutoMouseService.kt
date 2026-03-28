@@ -13,6 +13,7 @@ import android.os.Looper
 import android.os.Handler
 import android.os.PowerManager
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.darusc.mousedroid.MainActivity
 import com.darusc.mousedroid.R
@@ -50,17 +51,23 @@ class AutoMouseService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "onStartCommand called with action: ${intent?.action}")
         return when (intent?.action) {
             ACTION_START -> {
+                Log.d(TAG, "ACTION_START received")
                 extractConfig(intent!!)
                 startAutoMouse()
                 START_STICKY
             }
             ACTION_STOP -> {
+                Log.d(TAG, "ACTION_STOP received")
                 stopAutoMouse()
                 START_NOT_STICKY
             }
-            else -> START_NOT_STICKY
+            else -> {
+                Log.d(TAG, "Unknown action: ${intent?.action}")
+                START_NOT_STICKY
+            }
         }
     }
 
@@ -103,9 +110,14 @@ class AutoMouseService : Service() {
     }
 
     private fun acquireWakeLock() {
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AutoMouse::ServiceWakeLock")
-        wakeLock?.acquire(10 * 60 * 1000L) // 10 minutes max
+        try {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AutoMouse::ServiceWakeLock")
+            wakeLock?.acquire(10 * 60 * 1000L) // 10 minutes max
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to acquire wake lock: ${e.message}", e)
+            // Continue without wake lock - non-fatal error
+        }
     }
 
     private fun extractConfig(intent: Intent) {
@@ -119,20 +131,47 @@ class AutoMouseService : Service() {
         if (isRunning) return
         isRunning = true
         Log.d(TAG, "Auto mouse started. Move: ${moveIntervalMs}ms, Click: ${clickIntervalMs}ms, Duration: ${durationSeconds}s")
+        Toast.makeText(this, "AutoMouse Started!", Toast.LENGTH_SHORT).show()
         
-        // Set flag in SharedPreferences to indicate AutoMouse is running
-        val prefs = getSharedPreferences("automouse_state", android.content.Context.MODE_PRIVATE)
-        prefs.edit().putBoolean("is_running", true).apply()
-        
-        // Start as foreground service
-        val notification = createNotification().build()
-        startForeground(NOTIFICATION_ID, notification)
-        
-        startMouseMovement()
-        startAutoClick()
-        
-        if (durationSeconds > 0) {
-            startTimer()
+        try {
+            // Check if connection is valid
+            val isConnected = connectionManager.isConnected()
+            Log.d(TAG, "Connection status: connected=$isConnected")
+            if (!isConnected) {
+                Toast.makeText(this, "ERROR: Not connected to device!", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "ConnectionManager reports: not connected")
+                isRunning = false
+                return
+            }
+            
+            // Set flag in SharedPreferences to indicate AutoMouse is running
+            val prefs = getSharedPreferences("automouse_state", android.content.Context.MODE_PRIVATE)
+            prefs.edit().putBoolean("is_running", true).apply()
+            
+            // Start as foreground service with error handling for Android 12+
+            try {
+                val notification = createNotification().build()
+                startForeground(NOTIFICATION_ID, notification)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to start foreground service: ${e.message}", e)
+                com.darusc.mousedroid.CrashLogger.logCrash(this, e)
+                isRunning = false
+                prefs.edit().putBoolean("is_running", false).apply()
+                return
+            }
+            
+            startMouseMovement()
+            startAutoClick()
+            
+            if (durationSeconds > 0) {
+                startTimer()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in startAutoMouse: ${e.message}", e)
+            com.darusc.mousedroid.CrashLogger.logCrash(this, e)
+            isRunning = false
+            val prefs = getSharedPreferences("automouse_state", android.content.Context.MODE_PRIVATE)
+            prefs.edit().putBoolean("is_running", false).apply()
         }
     }
 
@@ -141,19 +180,29 @@ class AutoMouseService : Service() {
         isRunning = false
         Log.d(TAG, "Auto mouse stopped")
         
-        // Clear flag in SharedPreferences
-        val prefs = getSharedPreferences("automouse_state", android.content.Context.MODE_PRIVATE)
-        prefs.edit().putBoolean("is_running", false).apply()
-        
-        handler.removeCallbacks(moveRunnable!!)
-        handler.removeCallbacks(clickRunnable!!)
-        timer?.cancel()
-        
-        // Send button release to clear any held state
-        connectionManager.send(InputEvent.MouseDragState(InputEvent.MouseButton.NONE, false))
-        
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
+        try {
+            // Clear flag in SharedPreferences
+            val prefs = getSharedPreferences("automouse_state", android.content.Context.MODE_PRIVATE)
+            prefs.edit().putBoolean("is_running", false).apply()
+            
+            moveRunnable?.let { handler.removeCallbacks(it) }
+            clickRunnable?.let { handler.removeCallbacks(it) }
+            timer?.cancel()
+            
+            // Send button release to clear any held state
+            try {
+                connectionManager.send(InputEvent.MouseDragState(InputEvent.MouseButton.NONE, false), true)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error sending button release: ${e.message}")
+            }
+            
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in stopAutoMouse: ${e.message}", e)
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
     }
 
     private fun startTimer() {
@@ -189,10 +238,21 @@ class AutoMouseService : Service() {
                     // Send mouse move only if values changed
                     if (dx != 0 || dy != 0) {
                         try {
-                            connectionManager.send(InputEvent.MouseMove(dx, dy, InputEvent.MouseButton.NONE), false)
+                            val isConnected = connectionManager.isConnected()
+                            Log.d(TAG, "Mouse move attempt: connected=$isConnected, dx=$dx, dy=$dy")
+                            
+                            if (!isConnected) {
+                                Log.e(TAG, "CRITICAL: Connection lost during mouse movement!")
+                                return
+                            }
+                            
+                            connectionManager.send(InputEvent.MouseMove(dx, dy, InputEvent.MouseButton.NONE), true)
+                            Log.d(TAG, "Mouse move SENT: dx=$dx, dy=$dy")
                         } catch (e: Exception) {
-                            Log.e(TAG, "Error sending mouse move: ${e.message}")
+                            Log.e(TAG, "Error sending mouse move: ${e.message}", e)
                         }
+                    } else {
+                        Log.v(TAG, "Skipping mouse move: dx=$dx, dy=$dy (both zero)")
                     }
                     
                     // Reschedule
@@ -207,7 +267,13 @@ class AutoMouseService : Service() {
                 }
             }
         }
-        handler.post(moveRunnable!!)
+        Log.d(TAG, "Starting mouse movement with interval: $moveIntervalMs ms, max distance: $maxMoveDistance")
+        if (handler.looper != null) {
+            handler.post(moveRunnable!!)
+            Log.d(TAG, "Mouse movement runnable POSTED to handler")
+        } else {
+            Log.e(TAG, "CRITICAL: Handler looper is null!")
+        }
     }
 
     private fun startAutoClick() {
@@ -225,9 +291,18 @@ class AutoMouseService : Service() {
                     }
                     
                     try {
-                        connectionManager.send(InputEvent.MouseClick(button), false)
+                        val isConnected = connectionManager.isConnected()
+                        Log.d(TAG, "Click attempt: connected=$isConnected, button=$button")
+                        
+                        if (!isConnected) {
+                            Log.e(TAG, "CRITICAL: Connection lost during click!")
+                            return
+                        }
+                        
+                        connectionManager.send(InputEvent.MouseClick(button), true)
+                        Log.d(TAG, "Click SENT: $button")
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error sending click: ${e.message}")
+                        Log.e(TAG, "Error sending click: ${e.message}", e)
                     }
                     
                     // Reschedule
@@ -242,7 +317,13 @@ class AutoMouseService : Service() {
                 }
             }
         }
-        handler.post(clickRunnable!!)
+        Log.d(TAG, "Starting auto click with interval: $clickIntervalMs ms")
+        if (handler.looper != null) {
+            handler.post(clickRunnable!!)
+            Log.d(TAG, "Click runnable POSTED to handler")
+        } else {
+            Log.e(TAG, "CRITICAL: Handler looper is null for clicks!")
+        }
     }
 
     override fun onDestroy() {

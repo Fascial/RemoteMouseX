@@ -76,13 +76,6 @@ class BluetoothConnection(
                     listener.onConnected(Mode.BLUETOOTH, bluetoothHostDevice?.name ?: "Unknown device")
 
                     // Send a battery report after connecting
-//                    CoroutineScope(Dispatchers.IO).launch {
-//                        delay(3000)
-//                        if (bluetoothHostDevice != null) {
-//                            val level = BatteryMonitor.getBatteryLevel(context)
-//                            send(InputEvent.BatteryEvent(level))
-//                        }
-//                    }
                 }
 
                 BluetoothProfile.STATE_DISCONNECTING -> Log.d("Mousedroid", "Disconnecting...")

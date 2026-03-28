@@ -178,15 +178,11 @@ class AutoMouse : Fragment() {
     }
 
     private fun checkConnectionExists(): Boolean {
-        // Check if there's an active Bluetooth connection
-        val hasConnection = try {
-            // Try to send a dummy event to test connection
-            connectionManager.send(com.darusc.mousedroid.mkinput.InputEvent.MouseMove(0, 0, com.darusc.mousedroid.mkinput.InputEvent.MouseButton.NONE), false)
-            true
+        return try {
+            connectionManager.isConnected()
         } catch (e: Exception) {
             false
         }
-        return hasConnection
     }
 
     private fun stopAutoMouse() {
