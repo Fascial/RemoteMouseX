@@ -24,11 +24,11 @@ A Bluetooth HID remote control application for Android that allows you to contro
   - Supports Android 12+ with proper foreground service permissions
 
 - **Trackpad Recorder** - Record, playback, and save touchpad interactions
-  - Record mouse events with precise timing
-  - Playback recorded sequences with adjustable interval
+  - Record mouse events with precise timing and tactile haptic feedback
+  - Playback recorded sequences smoothly using a scalable 1.0x speed multiplier
   - Loop playback for repeated actions
-  - Save recordings to persistent storage
-  - Dedicated UI for recording management
+  - Save recordings to persistent storage immune to active list collisions
+  - Dedicated Voice-Recorder style UI for management
 
 - **Connection Management** - Persistent Bluetooth connections with state tracking
 - **Crash Logging** - Built-in crash logger to diagnose issues
@@ -98,7 +98,7 @@ Or manually copy the APK file to your device and install through the file manage
    - **Mute** - Toggle mute/unmute
    - **Volume Up** - Increase audio volume
 3. All buttons provide haptic feedback (vibration) and visual highlighting on press
-4. Arrow seek buttons work universally with any media player that supports arrow key navigation
+4. Ar row seek buttons work universally with any media player that supports arrow key navigation
 
 ### Using Trackpad Recorder
 
@@ -185,12 +185,10 @@ MouseBuster/
 5. **TouchpadViewModel** - Manages touchpad input and multimedia control events
    - Multimedia buttons with 8 action types (media control and seek)
    - Vibration feedback (20ms) and visual click feedback for accessibility
-   - MediaButtonLogger for debugging button presses
-6. **MediaButtonLogger** - Debug utility for tracking multimedia button presses
-7. **CrashLogger** - Persistent crash logging to SharedPreferences
-8. **RecorderViewModel** - Manages recording/playback state with delta-timestamp compression
-9. **Recorder Fragment** - Dedicated UI for recording interactions and saving replays
-10. **RecordedEvent** - Serializable container for InputEvent + delta timing
+6. **CrashLogger** - Persistent crash logging to SharedPreferences
+7. **RecorderViewModel** - Manages recording/playback state with delta-timestamp compression
+8. **Recorder Fragment** - Dedicated UI for recording interactions and saving replays
+9. **RecordedEvent** - Serializable container for InputEvent + delta timing
 
 ### Threading Model
 
@@ -199,6 +197,50 @@ MouseBuster/
 - Handler/Looper: Scheduled mouse movement and clicks in AutoMouseService
 
 ## Recent Updates
+
+### Version 3.4 (March 30, 2026)
+
+- **Trackpad Recorder UI/UX Modernization** - Converted UI to a premium Voice Recorder aesthetic
+  - Replaced dated card-based layout with a sleek, continuous bottom sheet surface
+  - Implemented a massive, centered circular `REC`/`STOP` button with prominent red bounds
+  - Added native material icons (`ic_play`, `ic_pause`) for tactile playback states
+  - Removed raw interval values for a true `playbackMultiplier` physics system (e.g., 1.5x) with a static `x` stepping UI
+  - Real-time dynamic validation: action buttons (`Clear`, `Save`) intelligently light up when tracking events
+  - Configured structural bounds ensuring the panel cleanly peaks without ever colliding with navigation toolbars
+- **System Haptics Integration** - Integrated Android `Vibrator` motor feedback
+  - Explicit 50ms tactile vibration "buzz" confirms exactly when a recording initializes or terminates
+- **Concurrency & Architecture Stability** - Liquidated fatal loop state overlaps
+  - Squashed fatal `ConcurrentModificationException` crashes by executing instant deep clones (`.toList()`, `ArrayList()`) of tracking arrays before iteration or file serialization
+  - Safely anchored background sequence loops universally to `viewModelScope.launch` preventing memory leaks when views die
+  - Enforced unbreakable conditional rules to seamlessly stop playback if recording is invoked, and vice-versa
+
+### Version 3.3 (March 29, 2026)
+
+- **AutoMouse Smooth Motion Physics** - Added velocity-based interpolation for natural movement
+  - Implemented smooth velocity tracking for mouse motion (no more random jittering)
+  - Linear interpolation with 0.2 easing factor for natural momentum feel
+  - Periodic direction changes (~400ms) creating smooth curves instead of robotic movement
+  - Better simulates human-like mouse movement patterns
+- **AutoMouse UI/UX Redesign** - Major interface improvements matching Touchpad design philosophy
+  - Card-based layout with organized sections for better visual hierarchy
+  - Live configuration summary card showing current settings (Move interval, Click interval, Distance, Duration)
+  - Preset speed buttons (Slow/Normal/Fast) with displayed values for quick configuration
+  - Larger buttons (48dp) for improved touch targets and accessibility
+  - Always-visible settings (no collapsible sections) for better discoverability
+  - Unit labels (ms, px) for clarity on what each value represents
+  - Better descriptions explaining each setting's purpose
+- **Trackpad Recorder UI/UX Redesign** - Consistent design improvements
+  - Card-based layout matching AutoMouse design philosophy
+  - Real-time recording status summary (Events count + Recording state)
+  - Recording controls card with larger 48dp buttons (Record/Play/Save/Clear)
+  - Playback settings card (always visible) with improved interval control
+  - Better descriptions for each section explaining functionality
+  - Saved recordings card for managing recorded sequences
+  - Removed collapsible sections for better content visibility
+- **Code Cleanup** - Removed MediaButtonLogger debug class
+  - Eliminated unnecessary debug logging overhead from multimedia controls
+  - Cleaned up imports and debug code across 3 files (TouchpadViewModel, Touchpad fragment, Input fragment)
+  - Simplified multimedia button handling without logging
 
 ### Version 3.2 (March 28, 2026)
 

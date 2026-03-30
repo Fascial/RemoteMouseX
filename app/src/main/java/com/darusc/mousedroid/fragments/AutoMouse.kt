@@ -54,6 +54,7 @@ class AutoMouse : Fragment() {
                 stopAutoMouse()
             }
         }
+        
         // Settings always visible regardless of toggle state
         binding.settingsContainer.visibility = View.VISIBLE
 
@@ -128,6 +129,9 @@ class AutoMouse : Fragment() {
             updateInputFields()
             if (isEnabled) updateServiceState()
         }
+
+        // Initialize configuration summary
+        updateConfigurationSummary()
     }
 
     private fun setupNumberField(
@@ -142,12 +146,17 @@ class AutoMouse : Fragment() {
     ) {
         editText.setText(initialValue.toString())
         
+        val updateSummary = {
+            updateConfigurationSummary()
+            if (isEnabled) updateServiceState()
+        }
+        
         minusBtn.setOnClickListener {
             val current = editText.text.toString().toLongOrNull() ?: initialValue
             val newValue = maxOf(min, current - step)
             editText.setText(newValue.toString())
             onValueChange(newValue)
-            if (isEnabled) updateServiceState()
+            updateSummary()
         }
 
         plusBtn.setOnClickListener {
@@ -155,7 +164,7 @@ class AutoMouse : Fragment() {
             val newValue = minOf(max, current + step)
             editText.setText(newValue.toString())
             onValueChange(newValue)
-            if (isEnabled) updateServiceState()
+            updateSummary()
         }
 
         editText.setOnFocusChangeListener { _, hasFocus ->
@@ -164,7 +173,7 @@ class AutoMouse : Fragment() {
                 val clamped = value.coerceIn(min, max)
                 editText.setText(clamped.toString())
                 onValueChange(clamped)
-                if (isEnabled) updateServiceState()
+                updateSummary()
             }
         }
     }
@@ -175,6 +184,18 @@ class AutoMouse : Fragment() {
         binding.maxDistanceInput.setText(maxDistance.toString())
         binding.durationMinutesInput.setText(durationMinutes.toString())
         binding.durationSecondsInput.setText(durationSeconds.toString())
+        updateConfigurationSummary()
+    }
+
+    private fun updateConfigurationSummary() {
+        val durationText = if (durationMinutes == 0 && durationSeconds == 0) {
+            "∞"
+        } else {
+            String.format("%02d:%02d", durationMinutes, durationSeconds)
+        }
+        
+        val summary = "Move: ${moveInterval}ms • Click: ${clickInterval}ms • Distance: ${maxDistance}px • Duration: $durationText"
+        binding.configSummary.text = summary
     }
 
     private fun checkConnectionExists(): Boolean {

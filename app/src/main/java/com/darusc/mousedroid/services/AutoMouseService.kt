@@ -42,6 +42,14 @@ class AutoMouseService : Service() {
     private var maxMoveDistance = 80         // Max pixels per movement
     private var durationSeconds = 0L         // 0 = unlimited
     
+    // Smooth motion with velocity
+    private var velocityX = 0f               // Current velocity in X direction
+    private var velocityY = 0f               // Current velocity in Y direction
+    private var targetVelocityX = 0f         // Target velocity for smooth transitions
+    private var targetVelocityY = 0f         // Target velocity for smooth transitions
+    private var moveCounter = 0              // Counter to periodically change direction
+    private val directionChangeInterval = 8  // Change direction every ~400ms (8 * 50ms)
+    
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
@@ -185,6 +193,13 @@ class AutoMouseService : Service() {
             val prefs = getSharedPreferences("automouse_state", android.content.Context.MODE_PRIVATE)
             prefs.edit().putBoolean("is_running", false).apply()
             
+            // Reset velocity
+            velocityX = 0f
+            velocityY = 0f
+            targetVelocityX = 0f
+            targetVelocityY = 0f
+            moveCounter = 0
+            
             moveRunnable?.let { handler.removeCallbacks(it) }
             clickRunnable?.let { handler.removeCallbacks(it) }
             timer?.cancel()
@@ -231,15 +246,28 @@ class AutoMouseService : Service() {
                 if (!isRunning) return
                 
                 try {
-                    // Random direction: -1, 0, or 1
-                    val dx = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1)
-                    val dy = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1)
+                    // Periodically choose new target velocity direction
+                    if (moveCounter % directionChangeInterval == 0) {
+                        targetVelocityX = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1).toFloat()
+                        targetVelocityY = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1).toFloat()
+                    }
+                    moveCounter++
+                    
+                    // Smooth interpolation: gradually move velocity towards target (easing)
+                    // Using linear interpolation with 0.2 easing factor for smooth transitions
+                    val easing = 0.2f
+                    velocityX += (targetVelocityX - velocityX) * easing
+                    velocityY += (targetVelocityY - velocityY) * easing
+                    
+                    // Round to integers for actual movement
+                    val dx = velocityX.toInt()
+                    val dy = velocityY.toInt()
                     
                     // Send mouse move only if values changed
                     if (dx != 0 || dy != 0) {
                         try {
                             val isConnected = connectionManager.isConnected()
-                            Log.d(TAG, "Mouse move attempt: connected=$isConnected, dx=$dx, dy=$dy")
+                            Log.d(TAG, "Mouse move: connected=$isConnected, vel=($velocityX, $velocityY), delta=($dx, $dy)")
                             
                             if (!isConnected) {
                                 Log.e(TAG, "CRITICAL: Connection lost during mouse movement!")
@@ -247,12 +275,9 @@ class AutoMouseService : Service() {
                             }
                             
                             connectionManager.send(InputEvent.MouseMove(dx, dy, InputEvent.MouseButton.NONE), true)
-                            Log.d(TAG, "Mouse move SENT: dx=$dx, dy=$dy")
                         } catch (e: Exception) {
                             Log.e(TAG, "Error sending mouse move: ${e.message}", e)
                         }
-                    } else {
-                        Log.v(TAG, "Skipping mouse move: dx=$dx, dy=$dy (both zero)")
                     }
                     
                     // Reschedule
@@ -267,7 +292,7 @@ class AutoMouseService : Service() {
                 }
             }
         }
-        Log.d(TAG, "Starting mouse movement with interval: $moveIntervalMs ms, max distance: $maxMoveDistance")
+        Log.d(TAG, "Starting mouse movement with interval: $moveIntervalMs ms, max distance: $maxMoveDistance, smooth velocity enabled")
         if (handler.looper != null) {
             handler.post(moveRunnable!!)
             Log.d(TAG, "Mouse movement runnable POSTED to handler")

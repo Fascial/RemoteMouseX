@@ -12,6 +12,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
+            <!-- Header with Toggle -->
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
@@ -32,24 +33,67 @@
                 app:layout_constraintTop_toTopOf="@+id/title"
                 app:layout_constraintBottom_toBottomOf="@+id/title" />
 
+            <!-- Summary Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/summaryCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/card_gray"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Current Configuration"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/configSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Move: 50ms • Click: 2000ms • Distance: 80px • Duration: ∞"
+                        android:textColor="@color/card_text"
+                        android:textSize="13sp"
+                        android:lineSpacingMultiplier="1.3" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Settings Container -->
             <LinearLayout
                 android:id="@+id/settingsContainer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title">
+                app:layout_constraintTop_toBottomOf="@+id/summaryCard">
 
                 <!-- Description -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Automatically move mouse and click while running in background"
+                    android:text="Automatically move mouse and click while running in background. Adjust settings below:"
                     android:textColor="@color/card_text2"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="24dp" />
+                    android:textSize="12sp"
+                    android:layout_marginBottom="20dp"
+                    android:lineSpacingMultiplier="1.2" />
 
                 <!-- Move Interval Card -->
                 <androidx.cardview.widget.CardView
@@ -60,73 +104,86 @@
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:padding="16dp">
 
                         <TextView
                             android:id="@+id/moveIntervalLabel"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Mouse Speed"
+                            android:text="Mouse Movement Speed"
                             android:textColor="@color/white"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
+                            android:layout_marginBottom="4dp" />
 
                         <TextView
                             android:id="@+id/moveIntervalDesc"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="milliseconds between movements"
+                            android:text="Lower = faster movement, higher = slower movement"
                             android:textColor="@color/card_text2"
-                            android:textSize="12sp"
-                            android:layout_marginTop="4dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/moveIntervalLabel" />
+                            android:textSize="11sp"
+                            android:layout_marginBottom="12dp" />
 
-                        <Button
-                            android:id="@+id/moveIntervalMinus"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:text="−"
-                            android:textSize="18sp"
-                            android:layout_marginTop="12dp"
-                            android:backgroundTint="@color/white"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/moveIntervalDesc" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
-                        <EditText
-                            android:id="@+id/moveIntervalInput"
-                            android:layout_width="80dp"
-                            android:layout_height="40dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@color/bg_dark"
-                            android:textColor="@color/white"
-                            android:textColorHint="@color/card_text2"
-                            android:text="50"
-                            android:gravity="center"
-                            android:inputType="number"
-                            android:textSize="14sp"
-                            app:layout_constraintStart_toEndOf="@+id/moveIntervalMinus"
-                            app:layout_constraintTop_toBottomOf="@+id/moveIntervalDesc" />
+                            <Button
+                                android:id="@+id/moveIntervalMinus"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:text="−"
+                                android:textSize="20sp"
+                                android:backgroundTint="@color/white" />
 
-                        <Button
-                            android:id="@+id/moveIntervalPlus"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:text="+"
-                            android:textSize="18sp"
-                            android:backgroundTint="@color/white"
-                            app:layout_constraintStart_toEndOf="@+id/moveIntervalInput"
-                            app:layout_constraintTop_toBottomOf="@+id/moveIntervalDesc" />
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginEnd="12dp">
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                                <EditText
+                                    android:id="@+id/moveIntervalInput"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="40dp"
+                                    android:background="@color/bg_dark"
+                                    android:textColor="@color/white"
+                                    android:text="50"
+                                    android:gravity="center"
+                                    android:inputType="number"
+                                    android:textSize="16sp"
+                                    android:paddingEnd="4dp" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ms"
+                                android:textColor="@color/card_text2"
+                                android:textSize="12sp"
+                                android:layout_marginEnd="4dp" />
+
+                            <Button
+                                android:id="@+id/moveIntervalPlus"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:text="+"
+                                android:textSize="20sp"
+                                android:backgroundTint="@color/white" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 
@@ -139,73 +196,86 @@
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:padding="16dp">
 
                         <TextView
                             android:id="@+id/clickIntervalLabel"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Click Interval"
                             android:textColor="@color/white"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
+                            android:layout_marginBottom="4dp" />
 
                         <TextView
                             android:id="@+id/clickIntervalDesc"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="milliseconds between clicks"
+                            android:text="Time between mouse clicks (random button: 70% left, 20% right, 10% middle)"
                             android:textColor="@color/card_text2"
-                            android:textSize="12sp"
-                            android:layout_marginTop="4dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/clickIntervalLabel" />
+                            android:textSize="11sp"
+                            android:layout_marginBottom="12dp" />
 
-                        <Button
-                            android:id="@+id/clickIntervalMinus"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:text="−"
-                            android:textSize="18sp"
-                            android:layout_marginTop="12dp"
-                            android:backgroundTint="@color/white"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/clickIntervalDesc" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
-                        <EditText
-                            android:id="@+id/clickIntervalInput"
-                            android:layout_width="80dp"
-                            android:layout_height="40dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@color/bg_dark"
-                            android:textColor="@color/white"
-                            android:textColorHint="@color/card_text2"
-                            android:text="2000"
-                            android:gravity="center"
-                            android:inputType="number"
-                            android:textSize="14sp"
-                            app:layout_constraintStart_toEndOf="@+id/clickIntervalMinus"
-                            app:layout_constraintTop_toBottomOf="@+id/clickIntervalDesc" />
+                            <Button
+                                android:id="@+id/clickIntervalMinus"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:text="−"
+                                android:textSize="20sp"
+                                android:backgroundTint="@color/white" />
 
-                        <Button
-                            android:id="@+id/clickIntervalPlus"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:text="+"
-                            android:textSize="18sp"
-                            android:backgroundTint="@color/white"
-                            app:layout_constraintStart_toEndOf="@+id/clickIntervalInput"
-                            app:layout_constraintTop_toBottomOf="@+id/clickIntervalDesc" />
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginEnd="12dp">
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                                <EditText
+                                    android:id="@+id/clickIntervalInput"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="40dp"
+                                    android:background="@color/bg_dark"
+                                    android:textColor="@color/white"
+                                    android:text="2000"
+                                    android:gravity="center"
+                                    android:inputType="number"
+                                    android:textSize="16sp"
+                                    android:paddingEnd="4dp" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ms"
+                                android:textColor="@color/card_text2"
+                                android:textSize="12sp"
+                                android:layout_marginEnd="4dp" />
+
+                            <Button
+                                android:id="@+id/clickIntervalPlus"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:text="+"
+                                android:textSize="20sp"
+                                android:backgroundTint="@color/white" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 
@@ -218,73 +288,86 @@
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:padding="16dp">
 
                         <TextView
                             android:id="@+id/maxDistanceLabel"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Movement Distance"
                             android:textColor="@color/white"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
+                            android:layout_marginBottom="4dp" />
 
                         <TextView
                             android:id="@+id/maxDistanceDesc"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="pixels per movement"
+                            android:text="Maximum pixels to move per step (higher = larger cursor jumps)"
                             android:textColor="@color/card_text2"
-                            android:textSize="12sp"
-                            android:layout_marginTop="4dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/maxDistanceLabel" />
+                            android:textSize="11sp"
+                            android:layout_marginBottom="12dp" />
 
-                        <Button
-                            android:id="@+id/maxDistanceMinus"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:text="−"
-                            android:textSize="18sp"
-                            android:layout_marginTop="12dp"
-                            android:backgroundTint="@color/white"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/maxDistanceDesc" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
-                        <EditText
-                            android:id="@+id/maxDistanceInput"
-                            android:layout_width="80dp"
-                            android:layout_height="40dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@color/bg_dark"
-                            android:textColor="@color/white"
-                            android:textColorHint="@color/card_text2"
-                            android:text="80"
-                            android:gravity="center"
-                            android:inputType="number"
-                            android:textSize="14sp"
-                            app:layout_constraintStart_toEndOf="@+id/maxDistanceMinus"
-                            app:layout_constraintTop_toBottomOf="@+id/maxDistanceDesc" />
+                            <Button
+                                android:id="@+id/maxDistanceMinus"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:text="−"
+                                android:textSize="20sp"
+                                android:backgroundTint="@color/white" />
 
-                        <Button
-                            android:id="@+id/maxDistancePlus"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:text="+"
-                            android:textSize="18sp"
-                            android:backgroundTint="@color/white"
-                            app:layout_constraintStart_toEndOf="@+id/maxDistanceInput"
-                            app:layout_constraintTop_toBottomOf="@+id/maxDistanceDesc" />
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="12dp"
+                                android:layout_marginEnd="12dp">
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                                <EditText
+                                    android:id="@+id/maxDistanceInput"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="40dp"
+                                    android:background="@color/bg_dark"
+                                    android:textColor="@color/white"
+                                    android:text="80"
+                                    android:gravity="center"
+                                    android:inputType="number"
+                                    android:textSize="16sp"
+                                    android:paddingEnd="4dp" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="px"
+                                android:textColor="@color/card_text2"
+                                android:textSize="12sp"
+                                android:layout_marginEnd="4dp" />
+
+                            <Button
+                                android:id="@+id/maxDistancePlus"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:text="+"
+                                android:textSize="20sp"
+                                android:backgroundTint="@color/white" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 
@@ -307,122 +390,122 @@
                             android:id="@+id/durationLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Duration (0 = unlimited)"
+                            android:text="Duration"
                             android:textColor="@color/white"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Set to 0:00 for unlimited running"
+                            android:textColor="@color/card_text2"
+                            android:textSize="11sp"
                             android:layout_marginBottom="12dp" />
 
+                        <!-- Minutes Row -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:layout_marginBottom="12dp">
+                            android:layout_marginBottom="8dp">
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:text="Minutes"
+                                android:textColor="@color/card_text2"
+                                android:textSize="11sp" />
 
                             <LinearLayout
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="48dp"
                                 android:layout_weight="1"
-                                android:orientation="vertical">
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
 
-                                <TextView
-                                    android:id="@+id/minutesTitle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Minutes"
-                                    android:textColor="@color/card_text2"
-                                    android:textSize="12sp"
-                                    android:layout_marginBottom="6dp" />
+                                <Button
+                                    android:id="@+id/durationMinutesMinus"
+                                    android:layout_width="44dp"
+                                    android:layout_height="44dp"
+                                    android:text="−"
+                                    android:textSize="18sp"
+                                    android:backgroundTint="@color/white" />
 
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal">
+                                <EditText
+                                    android:id="@+id/durationMinutesInput"
+                                    android:layout_width="60dp"
+                                    android:layout_height="44dp"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@color/bg_dark"
+                                    android:textColor="@color/white"
+                                    android:text="0"
+                                    android:gravity="center"
+                                    android:inputType="number"
+                                    android:textSize="16sp" />
 
-                                    <Button
-                                        android:id="@+id/durationMinutesMinus"
-                                        android:layout_width="36dp"
-                                        android:layout_height="36dp"
-                                        android:text="−"
-                                        android:textSize="16sp"
-                                        android:backgroundTint="@color/white" />
-
-                                    <EditText
-                                        android:id="@+id/durationMinutesInput"
-                                        android:layout_width="60dp"
-                                        android:layout_height="36dp"
-                                        android:layout_marginStart="6dp"
-                                        android:layout_marginEnd="6dp"
-                                        android:background="@color/bg_dark"
-                                        android:textColor="@color/white"
-                                        android:text="0"
-                                        android:gravity="center"
-                                        android:inputType="number"
-                                        android:textSize="14sp" />
-
-                                    <Button
-                                        android:id="@+id/durationMinutesPlus"
-                                        android:layout_width="36dp"
-                                        android:layout_height="36dp"
-                                        android:text="+"
-                                        android:textSize="16sp"
-                                        android:backgroundTint="@color/white" />
-
-                                </LinearLayout>
+                                <Button
+                                    android:id="@+id/durationMinutesPlus"
+                                    android:layout_width="44dp"
+                                    android:layout_height="44dp"
+                                    android:text="+"
+                                    android:textSize="18sp"
+                                    android:backgroundTint="@color/white" />
 
                             </LinearLayout>
 
+                        </LinearLayout>
+
+                        <!-- Seconds Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:text="Seconds"
+                                android:textColor="@color/card_text2"
+                                android:textSize="11sp" />
+
                             <LinearLayout
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="48dp"
                                 android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:layout_marginStart="16dp">
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
 
-                                <TextView
-                                    android:id="@+id/secondsTitle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Seconds"
-                                    android:textColor="@color/card_text2"
-                                    android:textSize="12sp"
-                                    android:layout_marginBottom="6dp" />
+                                <Button
+                                    android:id="@+id/durationSecondsMinus"
+                                    android:layout_width="44dp"
+                                    android:layout_height="44dp"
+                                    android:text="−"
+                                    android:textSize="18sp"
+                                    android:backgroundTint="@color/white" />
 
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal">
+                                <EditText
+                                    android:id="@+id/durationSecondsInput"
+                                    android:layout_width="60dp"
+                                    android:layout_height="44dp"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@color/bg_dark"
+                                    android:textColor="@color/white"
+                                    android:text="0"
+                                    android:gravity="center"
+                                    android:inputType="number"
+                                    android:textSize="16sp" />
 
-                                    <Button
-                                        android:id="@+id/durationSecondsMinus"
-                                        android:layout_width="36dp"
-                                        android:layout_height="36dp"
-                                        android:text="−"
-                                        android:textSize="16sp"
-                                        android:backgroundTint="@color/white" />
-
-                                    <EditText
-                                        android:id="@+id/durationSecondsInput"
-                                        android:layout_width="60dp"
-                                        android:layout_height="36dp"
-                                        android:layout_marginStart="6dp"
-                                        android:layout_marginEnd="6dp"
-                                        android:background="@color/bg_dark"
-                                        android:textColor="@color/white"
-                                        android:text="0"
-                                        android:gravity="center"
-                                        android:inputType="number"
-                                        android:textSize="14sp" />
-
-                                    <Button
-                                        android:id="@+id/durationSecondsPlus"
-                                        android:layout_width="36dp"
-                                        android:layout_height="36dp"
-                                        android:text="+"
-                                        android:textSize="16sp"
-                                        android:backgroundTint="@color/white" />
-
-                                </LinearLayout>
+                                <Button
+                                    android:id="@+id/durationSecondsPlus"
+                                    android:layout_width="44dp"
+                                    android:layout_height="44dp"
+                                    android:text="+"
+                                    android:textSize="18sp"
+                                    android:backgroundTint="@color/white" />
 
                             </LinearLayout>
 
@@ -432,20 +515,29 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <!-- Preset Buttons -->
+                <!-- Preset Buttons Section -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Quick Presets"
                     android:textColor="@color/white"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Click to apply preset motion profiles"
+                    android:textColor="@color/card_text2"
+                    android:textSize="11sp"
                     android:layout_marginBottom="8dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
                     <Button
                         android:id="@+id/presetSlow"
@@ -453,9 +545,10 @@
                         android:layout_height="44dp"
                         android:layout_weight="1"
                         android:layout_marginEnd="4dp"
-                        android:text="Slow"
+                        android:text="Slow\n(100ms • 3s)"
                         android:textColor="@color/bg_dark"
                         android:backgroundTint="@color/white"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
 
                     <Button
@@ -465,9 +558,10 @@
                         android:layout_weight="1"
                         android:layout_marginStart="4dp"
                         android:layout_marginEnd="4dp"
-                        android:text="Normal"
+                        android:text="Normal\n(50ms • 2s)"
                         android:textColor="@color/bg_dark"
                         android:backgroundTint="@color/white"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
 
                     <Button
@@ -476,9 +570,10 @@
                         android:layout_height="44dp"
                         android:layout_weight="1"
                         android:layout_marginStart="4dp"
-                        android:text="Fast"
+                        android:text="Fast\n(30ms • 1s)"
                         android:textColor="@color/bg_dark"
                         android:backgroundTint="@color/white"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
 
                 </LinearLayout>
