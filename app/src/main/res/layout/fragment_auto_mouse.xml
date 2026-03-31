@@ -5,104 +5,157 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_dark">
+        android:background="@color/auto_mouse_bg">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Header with Toggle -->
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
+            <!-- Header -->
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Auto Mouse"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginBottom="16dp">
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/autoMouseToggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/title"
-                app:layout_constraintBottom_toBottomOf="@+id/title" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Auto Mouse"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_centerInParent="true"/>
 
-            <!-- Summary Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/summaryCard"
-                android:layout_width="0dp"
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/autoMouseToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    app:thumbTint="@color/auto_mouse_cyan"
+                    app:trackTint="@color/auto_mouse_cyan_dim"/>
+            </RelativeLayout>
+
+            <!-- Live Config Summary -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="@color/card_gray"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title">
+                app:cardBackgroundColor="#132731"
+                app:strokeColor="@color/auto_mouse_cyan"
+                app:strokeWidth="1dp"
+                app:cardCornerRadius="12dp"
+                android:layout_marginBottom="12dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="14dp">
+                    android:padding="12dp">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Current Configuration"
+                        android:text="LIVE CONFIG SUMMARY"
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
+                        android:layout_marginBottom="8dp"/>
 
-                    <TextView
-                        android:id="@+id/configSummary"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Move: 50ms • Click: 2000ms • Distance: 80px • Duration: ∞"
-                        android:textColor="@color/card_text"
-                        android:textSize="13sp"
-                        android:lineSpacingMultiplier="1.3" />
+                        android:orientation="horizontal"
+                        android:baselineAligned="false">
 
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <TextView android:id="@+id/summaryMove" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="50ms" android:textColor="@color/white" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Move" android:textColor="@color/white" android:textSize="10sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="•" android:textColor="@color/auto_mouse_cyan"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <TextView android:id="@+id/summaryClick" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2s" android:textColor="@color/white" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Click" android:textColor="@color/white" android:textSize="10sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="•" android:textColor="@color/auto_mouse_cyan"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <TextView android:id="@+id/summaryDist" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="80px" android:textColor="@color/white" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dist" android:textColor="@color/white" android:textSize="10sp"/>
+                        </LinearLayout>
+
+                         <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="•" android:textColor="@color/auto_mouse_cyan"/>
+                        </LinearLayout>
+
+                         <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <TextView android:id="@+id/summaryDuration" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unlimited" android:textColor="@color/white" android:textStyle="bold" android:textSize="12sp" android:maxLines="1" android:ellipsize="end"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Duration" android:textColor="@color/white" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            </androidx.cardview.widget.CardView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Set precise movement and click behavior below."
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:layout_marginBottom="16dp"/>
 
             <!-- Settings Container -->
             <LinearLayout
                 android:id="@+id/settingsContainer"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/summaryCard">
+                android:orientation="vertical">
 
-                <!-- Description -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Automatically move mouse and click while running in background. Adjust settings below:"
-                    android:textColor="@color/card_text2"
-                    android:textSize="12sp"
-                    android:layout_marginBottom="20dp"
-                    android:lineSpacingMultiplier="1.2" />
-
-                <!-- Move Interval Card -->
-                <androidx.cardview.widget.CardView
+                <!-- Velocity Card -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="@color/card_gray"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    app:cardBackgroundColor="@color/auto_mouse_card_bg"
+                    app:cardCornerRadius="12dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -111,90 +164,119 @@
                         android:padding="16dp">
 
                         <TextView
-                            android:id="@+id/moveIntervalLabel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Mouse Movement Speed"
+                            android:text="Velocity (ms)"
                             android:textColor="@color/white"
                             android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
+                            android:textStyle="bold"/>
 
                         <TextView
-                            android:id="@+id/moveIntervalDesc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Lower = faster movement, higher = slower movement"
-                            android:textColor="@color/card_text2"
-                            android:textSize="11sp"
+                            android:text="Cursor Speed (lower is faster)"
+                            android:textColor="@color/auto_mouse_text_dim"
+                            android:textSize="12sp"
                             android:layout_marginBottom="12dp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="48dp"
+                            android:layout_height="44dp"
                             android:orientation="horizontal"
                             android:gravity="center_vertical">
 
-                            <Button
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/moveIntervalMinus"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
                                 android:text="−"
                                 android:textSize="20sp"
-                                android:backgroundTint="@color/white" />
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
 
-                            <LinearLayout
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/moveIntervalMinus10"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
+                                android:text="&lt;&lt;"
+                                android:textSize="14sp"
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                android:layout_marginStart="4dp"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
+
+                            <EditText
+                                android:id="@+id/moveIntervalInput"
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginEnd="12dp">
+                                android:layout_height="match_parent"
+                                android:backgroundTint="@android:color/transparent"
+                                android:background="@color/auto_mouse_cyan_dim"
+                                android:textColor="@color/white"
+                                android:text="50"
+                                android:gravity="center"
+                                android:inputType="number"
+                                android:textSize="16sp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"/>
 
-                                <EditText
-                                    android:id="@+id/moveIntervalInput"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="40dp"
-                                    android:background="@color/bg_dark"
-                                    android:textColor="@color/white"
-                                    android:text="50"
-                                    android:gravity="center"
-                                    android:inputType="number"
-                                    android:textSize="16sp"
-                                    android:paddingEnd="4dp" />
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/moveIntervalPlus10"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
+                                android:text="&gt;&gt;"
+                                android:textSize="14sp"
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                android:layout_marginEnd="4dp"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
 
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="ms"
-                                android:textColor="@color/card_text2"
-                                android:textSize="12sp"
-                                android:layout_marginEnd="4dp" />
-
-                            <Button
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/moveIntervalPlus"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
                                 android:text="+"
                                 android:textSize="20sp"
-                                android:backgroundTint="@color/white" />
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
 
                         </LinearLayout>
-
                     </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                </androidx.cardview.widget.CardView>
-
-                <!-- Click Interval Card -->
-                <androidx.cardview.widget.CardView
+                <!-- Click Frequency Card -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="@color/card_gray"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    app:cardBackgroundColor="@color/auto_mouse_card_bg"
+                    app:cardCornerRadius="12dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -203,90 +285,119 @@
                         android:padding="16dp">
 
                         <TextView
-                            android:id="@+id/clickIntervalLabel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Click Interval"
+                            android:text="Click Frequency (ms)"
                             android:textColor="@color/white"
                             android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
+                            android:textStyle="bold"/>
 
                         <TextView
-                            android:id="@+id/clickIntervalDesc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Time between mouse clicks (random button: 70% left, 20% right, 10% middle)"
-                            android:textColor="@color/card_text2"
-                            android:textSize="11sp"
+                            android:text="Control gap between mouse clicks."
+                            android:textColor="@color/auto_mouse_text_dim"
+                            android:textSize="12sp"
                             android:layout_marginBottom="12dp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="48dp"
+                            android:layout_height="44dp"
                             android:orientation="horizontal"
                             android:gravity="center_vertical">
 
-                            <Button
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/clickIntervalMinus"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
                                 android:text="−"
                                 android:textSize="20sp"
-                                android:backgroundTint="@color/white" />
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
 
-                            <LinearLayout
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/clickIntervalMinus10"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
+                                android:text="&lt;&lt;"
+                                android:textSize="14sp"
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                android:layout_marginStart="4dp"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
+
+                            <EditText
+                                android:id="@+id/clickIntervalInput"
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginEnd="12dp">
+                                android:layout_height="match_parent"
+                                android:backgroundTint="@android:color/transparent"
+                                android:background="@color/auto_mouse_cyan_dim"
+                                android:textColor="@color/white"
+                                android:text="2000"
+                                android:gravity="center"
+                                android:inputType="number"
+                                android:textSize="16sp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"/>
 
-                                <EditText
-                                    android:id="@+id/clickIntervalInput"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="40dp"
-                                    android:background="@color/bg_dark"
-                                    android:textColor="@color/white"
-                                    android:text="2000"
-                                    android:gravity="center"
-                                    android:inputType="number"
-                                    android:textSize="16sp"
-                                    android:paddingEnd="4dp" />
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/clickIntervalPlus10"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
+                                android:text="&gt;&gt;"
+                                android:textSize="14sp"
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                android:layout_marginEnd="4dp"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
 
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="ms"
-                                android:textColor="@color/card_text2"
-                                android:textSize="12sp"
-                                android:layout_marginEnd="4dp" />
-
-                            <Button
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/clickIntervalPlus"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
                                 android:text="+"
                                 android:textSize="20sp"
-                                android:backgroundTint="@color/white" />
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
 
                         </LinearLayout>
-
                     </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                </androidx.cardview.widget.CardView>
-
-                <!-- Max Distance Card -->
-                <androidx.cardview.widget.CardView
+                <!-- Max Jump Card -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="@color/card_gray"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    app:cardBackgroundColor="@color/auto_mouse_card_bg"
+                    app:cardCornerRadius="12dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -295,293 +406,291 @@
                         android:padding="16dp">
 
                         <TextView
-                            android:id="@+id/maxDistanceLabel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Movement Distance"
+                            android:text="Max Jump (px)"
                             android:textColor="@color/white"
                             android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
+                            android:textStyle="bold"/>
 
                         <TextView
-                            android:id="@+id/maxDistanceDesc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Maximum pixels to move per step (higher = larger cursor jumps)"
-                            android:textColor="@color/card_text2"
-                            android:textSize="11sp"
+                            android:text="Set Maximum Cursor Distance"
+                            android:textColor="@color/auto_mouse_text_dim"
+                            android:textSize="12sp"
                             android:layout_marginBottom="12dp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="48dp"
+                            android:layout_height="44dp"
                             android:orientation="horizontal"
                             android:gravity="center_vertical">
 
-                            <Button
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/maxDistanceMinus"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
                                 android:text="−"
                                 android:textSize="20sp"
-                                android:backgroundTint="@color/white" />
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
 
-                            <LinearLayout
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/maxDistanceMinus10"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
+                                android:text="&lt;&lt;"
+                                android:textSize="14sp"
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                android:layout_marginStart="4dp"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
+
+                            <EditText
+                                android:id="@+id/maxDistanceInput"
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginEnd="12dp">
+                                android:layout_height="match_parent"
+                                android:backgroundTint="@android:color/transparent"
+                                android:background="@color/auto_mouse_cyan_dim"
+                                android:textColor="@color/white"
+                                android:text="80"
+                                android:gravity="center"
+                                android:inputType="number"
+                                android:textSize="16sp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"/>
 
-                                <EditText
-                                    android:id="@+id/maxDistanceInput"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="40dp"
-                                    android:background="@color/bg_dark"
-                                    android:textColor="@color/white"
-                                    android:text="80"
-                                    android:gravity="center"
-                                    android:inputType="number"
-                                    android:textSize="16sp"
-                                    android:paddingEnd="4dp" />
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/maxDistancePlus10"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
+                                android:text="&gt;&gt;"
+                                android:textSize="14sp"
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                android:layout_marginEnd="4dp"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
 
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="px"
-                                android:textColor="@color/card_text2"
-                                android:textSize="12sp"
-                                android:layout_marginEnd="4dp" />
-
-                            <Button
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/maxDistancePlus"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
+                                android:layout_width="44dp"
+                                android:layout_height="match_parent"
                                 android:text="+"
                                 android:textSize="20sp"
-                                android:backgroundTint="@color/white" />
+                                android:textColor="#000000"
+                                app:backgroundTint="@color/auto_mouse_cyan"
+                                app:cornerRadius="8dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                android:minWidth="0dp"
+                                android:padding="0dp"/>
 
                         </LinearLayout>
-
                     </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                </androidx.cardview.widget.CardView>
-
-                <!-- Duration Card -->
-                <androidx.cardview.widget.CardView
+                <!-- Timer Card -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    app:cardBackgroundColor="@color/card_gray"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    app:cardBackgroundColor="@color/auto_mouse_card_bg"
+                    app:cardCornerRadius="12dp">
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:padding="16dp">
 
-                        <TextView
-                            android:id="@+id/durationLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Duration"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Set to 0:00 for unlimited running"
-                            android:textColor="@color/card_text2"
-                            android:textSize="11sp"
-                            android:layout_marginBottom="12dp" />
-
-                        <!-- Minutes Row -->
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="8dp">
-
+                            android:orientation="vertical"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true">
                             <TextView
-                                android:layout_width="60dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Minutes"
-                                android:textColor="@color/card_text2"
-                                android:textSize="11sp" />
-
+                                android:text="Shut-off Timer"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:layout_width="160dp"
+                                android:layout_height="wrap_content"
+                                android:text="Run continuously or set a limit"
+                                android:textColor="@color/auto_mouse_text_dim"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                        
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_alignParentEnd="true"
+                            android:gravity="end">
+                            
+                            <!-- Timer Inputs -->
                             <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="48dp"
-                                android:layout_weight="1"
+                                android:id="@+id/durationInputsLayout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="8dp"
+                                android:visibility="gone">
+
+                                <!-- Minutes -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/auto_mouse_cyan_dim"
+                                    android:orientation="vertical"
+                                    android:padding="4dp">
+                                    <Button android:id="@+id/durationMinutesPlus" android:layout_width="32dp" android:layout_height="24dp" android:text="^" android:textColor="@color/white" android:background="@android:color/transparent" android:minHeight="0dp" android:minWidth="0dp" android:padding="0dp"/>
+                                    <EditText android:id="@+id/durationMinutesInput" android:layout_width="32dp" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:gravity="center" android:background="@null" android:inputType="number" android:textSize="14sp"/>
+                                    <Button android:id="@+id/durationMinutesMinus" android:layout_width="32dp" android:layout_height="24dp" android:text="v" android:textColor="@color/white" android:background="@android:color/transparent" android:minHeight="0dp" android:minWidth="0dp" android:padding="0dp"/>
+                                </LinearLayout>
+                                
+                                <TextView android:layout_width="wrap_content" android:layout_height="match_parent" android:text=":" android:textColor="@color/white" android:gravity="center" android:padding="4dp"/>
+
+                                <!-- Seconds -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/auto_mouse_cyan_dim"
+                                    android:orientation="vertical"
+                                    android:padding="4dp">
+                                    <Button android:id="@+id/durationSecondsPlus" android:layout_width="32dp" android:layout_height="24dp" android:text="^" android:textColor="@color/white" android:background="@android:color/transparent" android:minHeight="0dp" android:minWidth="0dp" android:padding="0dp"/>
+                                    <EditText android:id="@+id/durationSecondsInput" android:layout_width="32dp" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:gravity="center" android:background="@null" android:inputType="number" android:textSize="14sp"/>
+                                    <Button android:id="@+id/durationSecondsMinus" android:layout_width="32dp" android:layout_height="24dp" android:text="v" android:textColor="@color/white" android:background="@android:color/transparent" android:minHeight="0dp" android:minWidth="0dp" android:padding="0dp"/>
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <!-- Run Infinitely Toggle -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:orientation="horizontal"
                                 android:gravity="center_vertical">
-
-                                <Button
-                                    android:id="@+id/durationMinutesMinus"
-                                    android:layout_width="44dp"
-                                    android:layout_height="44dp"
-                                    android:text="−"
-                                    android:textSize="18sp"
-                                    android:backgroundTint="@color/white" />
-
-                                <EditText
-                                    android:id="@+id/durationMinutesInput"
-                                    android:layout_width="60dp"
-                                    android:layout_height="44dp"
-                                    android:layout_marginStart="8dp"
-                                    android:layout_marginEnd="8dp"
-                                    android:background="@color/bg_dark"
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Run Infinitely"
                                     android:textColor="@color/white"
-                                    android:text="0"
-                                    android:gravity="center"
-                                    android:inputType="number"
-                                    android:textSize="16sp" />
-
-                                <Button
-                                    android:id="@+id/durationMinutesPlus"
-                                    android:layout_width="44dp"
-                                    android:layout_height="44dp"
-                                    android:text="+"
-                                    android:textSize="18sp"
-                                    android:backgroundTint="@color/white" />
-
+                                    android:textSize="12sp"
+                                    android:layout_marginEnd="8dp"/>
+                                <com.google.android.material.switchmaterial.SwitchMaterial
+                                    android:id="@+id/runInfinitelyToggle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    app:thumbTint="@color/auto_mouse_cyan"
+                                    app:trackTint="@color/auto_mouse_cyan_dim"/>
                             </LinearLayout>
 
                         </LinearLayout>
 
-                        <!-- Seconds Row -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                            <TextView
-                                android:layout_width="60dp"
-                                android:layout_height="wrap_content"
-                                android:text="Seconds"
-                                android:textColor="@color/card_text2"
-                                android:textSize="11sp" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="48dp"
-                                android:layout_weight="1"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
-
-                                <Button
-                                    android:id="@+id/durationSecondsMinus"
-                                    android:layout_width="44dp"
-                                    android:layout_height="44dp"
-                                    android:text="−"
-                                    android:textSize="18sp"
-                                    android:backgroundTint="@color/white" />
-
-                                <EditText
-                                    android:id="@+id/durationSecondsInput"
-                                    android:layout_width="60dp"
-                                    android:layout_height="44dp"
-                                    android:layout_marginStart="8dp"
-                                    android:layout_marginEnd="8dp"
-                                    android:background="@color/bg_dark"
-                                    android:textColor="@color/white"
-                                    android:text="0"
-                                    android:gravity="center"
-                                    android:inputType="number"
-                                    android:textSize="16sp" />
-
-                                <Button
-                                    android:id="@+id/durationSecondsPlus"
-                                    android:layout_width="44dp"
-                                    android:layout_height="44dp"
-                                    android:text="+"
-                                    android:textSize="18sp"
-                                    android:backgroundTint="@color/white" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </androidx.cardview.widget.CardView>
-
-                <!-- Preset Buttons Section -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Quick Presets"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
+                    android:text="PRESET PROFILES"
+                    android:textColor="@color/auto_mouse_text_dim"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Click to apply preset motion profiles"
-                    android:textColor="@color/card_text2"
-                    android:textSize="11sp"
                     android:layout_marginBottom="8dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center">
+                    android:weightSum="4">
 
-                    <Button
-                        android:id="@+id/presetSlow"
+                    <!-- Profile 1 -->
+                    <LinearLayout
+                        android:id="@+id/presetSmoothLinear"
                         android:layout_width="0dp"
-                        android:layout_height="44dp"
                         android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
-                        android:text="Slow\n(100ms • 3s)"
-                        android:textColor="@color/bg_dark"
-                        android:backgroundTint="@color/white"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:layout_height="80dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/preset_bg_selector"
+                        android:gravity="center">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:text="/" android:textColor="@color/white" android:gravity="center" android:textSize="18sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Smooth\nLinear" android:textColor="@color/white" android:textSize="10sp" android:gravity="center" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
 
-                    <Button
-                        android:id="@+id/presetNormal"
+                    <!-- Profile 2 -->
+                    <LinearLayout
+                        android:id="@+id/presetCircularTrace"
                         android:layout_width="0dp"
-                        android:layout_height="44dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:text="Normal\n(50ms • 2s)"
-                        android:textColor="@color/bg_dark"
-                        android:backgroundTint="@color/white"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:layout_height="80dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/preset_bg_selector"
+                        android:gravity="center"
+                        android:layout_marginStart="4dp">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:text="O" android:textColor="@color/white" android:gravity="center" android:textSize="18sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Circular\nTrace" android:textColor="@color/white" android:textSize="10sp" android:gravity="center" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
 
-                    <Button
-                        android:id="@+id/presetFast"
+                    <!-- Profile 3 -->
+                    <LinearLayout
+                        android:id="@+id/presetErraticJumps"
                         android:layout_width="0dp"
-                        android:layout_height="44dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:text="Fast\n(30ms • 1s)"
-                        android:textColor="@color/bg_dark"
-                        android:backgroundTint="@color/white"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:layout_height="80dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/preset_bg_selector"
+                        android:gravity="center"
+                        android:layout_marginStart="4dp">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:text="N" android:textColor="@color/white" android:gravity="center" android:textSize="18sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Erratic\nJumps" android:textColor="@color/white" android:textSize="10sp" android:gravity="center" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+
+                    <!-- Profile 4 -->
+                    <LinearLayout
+                        android:id="@+id/presetPatternRepeat"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="80dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/preset_bg_selector"
+                        android:gravity="center"
+                        android:layout_marginStart="4dp">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:text=":::" android:textColor="@color/white" android:gravity="center" android:textSize="18sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pattern\nRepeat" android:textColor="@color/white" android:textSize="10sp" android:gravity="center" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        </LinearLayout>
     </ScrollView>
-
 </layout>

@@ -50,6 +50,11 @@ class AutoMouseService : Service() {
     private var moveCounter = 0              // Counter to periodically change direction
     private val directionChangeInterval = 8  // Change direction every ~400ms (8 * 50ms)
     
+    // Pattern state
+    private var patternType = PATTERN_SMOOTH_LINEAR
+    private var circleAngle = 0.0
+    private var patternStep = 0
+    
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
@@ -133,6 +138,7 @@ class AutoMouseService : Service() {
         clickIntervalMs = intent.getLongExtra(EXTRA_CLICK_INTERVAL, 2000L)
         maxMoveDistance = intent.getIntExtra(EXTRA_MAX_DISTANCE, 80)
         durationSeconds = intent.getLongExtra(EXTRA_DURATION_SECONDS, 0L)
+        patternType = intent.getIntExtra(EXTRA_PATTERN_TYPE, PATTERN_SMOOTH_LINEAR)
     }
 
     private fun startAutoMouse() {
@@ -246,22 +252,51 @@ class AutoMouseService : Service() {
                 if (!isRunning) return
                 
                 try {
-                    // Periodically choose new target velocity direction
-                    if (moveCounter % directionChangeInterval == 0) {
-                        targetVelocityX = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1).toFloat()
-                        targetVelocityY = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1).toFloat()
+                    var dx = 0
+                    var dy = 0
+
+                    when (patternType) {
+                        PATTERN_SMOOTH_LINEAR -> {
+                            if (moveCounter % directionChangeInterval == 0) {
+                                targetVelocityX = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1).toFloat()
+                                targetVelocityY = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1).toFloat()
+                            }
+                            moveCounter++
+                            val easing = 0.2f
+                            velocityX += (targetVelocityX - velocityX) * easing
+                            velocityY += (targetVelocityY - velocityY) * easing
+                            dx = velocityX.toInt()
+                            dy = velocityY.toInt()
+                        }
+                        PATTERN_CIRCULAR_TRACE -> {
+                            val radius = maxOf(10.0, maxMoveDistance / 2.0)
+                            val rad = Math.toRadians(circleAngle)
+                            val nextRad = Math.toRadians(circleAngle + 20.0) // 20 degrees per tick
+                            
+                            val currentX = radius * Math.cos(rad)
+                            val currentY = radius * Math.sin(rad)
+                            val nextX = radius * Math.cos(nextRad)
+                            val nextY = radius * Math.sin(nextRad)
+                            
+                            dx = (nextX - currentX).toInt()
+                            dy = (nextY - currentY).toInt()
+                            circleAngle = (circleAngle + 20.0) % 360
+                        }
+                        PATTERN_ERRATIC_JUMPS -> {
+                            dx = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1)
+                            dy = Random.nextInt(-maxMoveDistance, maxMoveDistance + 1)
+                        }
+                        PATTERN_PATTERN_REPEAT -> {
+                            val stepSize = maxOf(2, maxMoveDistance / 10)
+                            when (patternStep % 40) {
+                                in 0..9 -> { dx = stepSize; dy = 0 } // Right
+                                in 10..19 -> { dx = 0; dy = stepSize } // Down
+                                in 20..29 -> { dx = -stepSize; dy = 0 } // Left
+                                in 30..39 -> { dx = 0; dy = -stepSize } // Up
+                            }
+                            patternStep++
+                        }
                     }
-                    moveCounter++
-                    
-                    // Smooth interpolation: gradually move velocity towards target (easing)
-                    // Using linear interpolation with 0.2 easing factor for smooth transitions
-                    val easing = 0.2f
-                    velocityX += (targetVelocityX - velocityX) * easing
-                    velocityY += (targetVelocityY - velocityY) * easing
-                    
-                    // Round to integers for actual movement
-                    val dx = velocityX.toInt()
-                    val dy = velocityY.toInt()
                     
                     // Send mouse move only if values changed
                     if (dx != 0 || dy != 0) {
@@ -367,5 +402,11 @@ class AutoMouseService : Service() {
         const val EXTRA_CLICK_INTERVAL = "click_interval_ms"
         const val EXTRA_MAX_DISTANCE = "max_distance"
         const val EXTRA_DURATION_SECONDS = "duration_seconds"
+        const val EXTRA_PATTERN_TYPE = "pattern_type"
+        
+        const val PATTERN_SMOOTH_LINEAR = 0
+        const val PATTERN_CIRCULAR_TRACE = 1
+        const val PATTERN_ERRATIC_JUMPS = 2
+        const val PATTERN_PATTERN_REPEAT = 3
     }
 }

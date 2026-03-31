@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:id="@+id/keyboardRoot" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@color/auto_mouse_bg" android:padding="2dp">
+        <!-- Row 1 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+            <Button android:id="@+id/key_esc" style="@style/PcKey" android:layout_weight="1" android:text="Esc" app:backgroundTint="#1C3144" android:textColor="#FFFFFF" />
+            <Button android:id="@+id/key_f1" style="@style/PcKey" android:layout_weight="1" android:text="F1" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_f2" style="@style/PcKey" android:layout_weight="1" android:text="F2" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_f3" style="@style/PcKey" android:layout_weight="1" android:text="F3" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_f4" style="@style/PcKey" android:layout_weight="1" android:text="F4" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_f5" style="@style/PcKey" android:layout_weight="1" android:text="F5" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_f6" style="@style/PcKey" android:layout_weight="1" android:text="F6" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_f7" style="@style/PcKey" android:layout_weight="1" android:text="F7" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_f8" style="@style/PcKey" android:layout_weight="1" android:text="F8" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_f9" style="@style/PcKey" android:layout_weight="1" android:text="F9" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_f10" style="@style/PcKey" android:layout_weight="1" android:text="F10" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_f11" style="@style/PcKey" android:layout_weight="1" android:text="F11" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_f12" style="@style/PcKey" android:layout_weight="1" android:text="F12" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_del" style="@style/PcKey" android:layout_weight="1.5" android:text="Del" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+        </LinearLayout>
+        <!-- Row 2 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+            <Button android:id="@+id/key_tilde" style="@style/PcKey" android:layout_weight="1" android:text="~\n`" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_1" style="@style/PcKey" android:layout_weight="1" android:text="!\n1" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_2" style="@style/PcKey" android:layout_weight="1" android:text="@\n2" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_3" style="@style/PcKey" android:layout_weight="1" android:text="#\n3" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_4" style="@style/PcKey" android:layout_weight="1" android:text="$\n4" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_5" style="@style/PcKey" android:layout_weight="1" android:text="%\n5" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_6" style="@style/PcKey" android:layout_weight="1" android:text="^\n6" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_7" style="@style/PcKey" android:layout_weight="1" android:text="&amp;\n7" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_8" style="@style/PcKey" android:layout_weight="1" android:text="*\n8" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_9" style="@style/PcKey" android:layout_weight="1" android:text="(\n9" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_0" style="@style/PcKey" android:layout_weight="1" android:text=")\n0" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_minus" style="@style/PcKey" android:layout_weight="1" android:text="_\n-" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_equals" style="@style/PcKey" android:layout_weight="1" android:text="+\n=" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_backspace" style="@style/PcKey" android:layout_weight="2" android:text="Backspace" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_home" style="@style/PcKey" android:layout_weight="1" android:text="Home" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+        </LinearLayout>
+        <!-- Row 3 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+            <Button android:id="@+id/key_tab" style="@style/PcKey" android:layout_weight="1.5" android:text="Tab" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_q" style="@style/PcKey" android:layout_weight="1" android:text="Q" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_w" style="@style/PcKey" android:layout_weight="1" android:text="W" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_e" style="@style/PcKey" android:layout_weight="1" android:text="E" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_r" style="@style/PcKey" android:layout_weight="1" android:text="R" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_t" style="@style/PcKey" android:layout_weight="1" android:text="T" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_y" style="@style/PcKey" android:layout_weight="1" android:text="Y" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_u" style="@style/PcKey" android:layout_weight="1" android:text="U" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_i" style="@style/PcKey" android:layout_weight="1" android:text="I" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_o" style="@style/PcKey" android:layout_weight="1" android:text="O" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_p" style="@style/PcKey" android:layout_weight="1" android:text="P" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_lbracket" style="@style/PcKey" android:layout_weight="1" android:text="{\n[" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_rbracket" style="@style/PcKey" android:layout_weight="1" android:text="}\n]" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_backslash" style="@style/PcKey" android:layout_weight="1.5" android:text="|\n\\" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_pgup" style="@style/PcKey" android:layout_weight="1" android:text="PgUp" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+        </LinearLayout>
+        <!-- Row 4 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+            <Button android:id="@+id/key_caps" style="@style/PcKey" android:layout_weight="1.8" android:text="Caps" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_a" style="@style/PcKey" android:layout_weight="1" android:text="A" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_s" style="@style/PcKey" android:layout_weight="1" android:text="S" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_d" style="@style/PcKey" android:layout_weight="1" android:text="D" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_f" style="@style/PcKey" android:layout_weight="1" android:text="F" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_g" style="@style/PcKey" android:layout_weight="1" android:text="G" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_h" style="@style/PcKey" android:layout_weight="1" android:text="H" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_j" style="@style/PcKey" android:layout_weight="1" android:text="J" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_k" style="@style/PcKey" android:layout_weight="1" android:text="K" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_l" style="@style/PcKey" android:layout_weight="1" android:text="L" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_semicolon" style="@style/PcKey" android:layout_weight="1" android:text=":\n;" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_quote" style="@style/PcKey" android:layout_weight="1" android:text="&quot;\n'" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_enter" style="@style/PcKey" android:layout_weight="2.2" android:text="Enter" app:backgroundTint="#1C3144" android:textColor="#FFFFFF" />
+            <Button android:id="@+id/key_pgdn" style="@style/PcKey" android:layout_weight="1" android:text="PgDn" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+        </LinearLayout>
+        <!-- Row 5 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+            <Button android:id="@+id/key_lshift" style="@style/PcKey" android:layout_weight="2.3" android:text="Shift" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_z" style="@style/PcKey" android:layout_weight="1" android:text="Z" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_x" style="@style/PcKey" android:layout_weight="1" android:text="X" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_c" style="@style/PcKey" android:layout_weight="1" android:text="C" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_v" style="@style/PcKey" android:layout_weight="1" android:text="V" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_b" style="@style/PcKey" android:layout_weight="1" android:text="B" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_n" style="@style/PcKey" android:layout_weight="1" android:text="N" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_m" style="@style/PcKey" android:layout_weight="1" android:text="M" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_comma" style="@style/PcKey" android:layout_weight="1" android:text="&lt;\n," app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_period" style="@style/PcKey" android:layout_weight="1" android:text="&gt;\n." app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_slash" style="@style/PcKey" android:layout_weight="1" android:text="?\n/" app:backgroundTint="#FFFFFF" android:textColor="#000000" />
+            <Button android:id="@+id/key_rshift" style="@style/PcKey" android:layout_weight="1.5" android:text="Shift" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_up" style="@style/PcKey" android:layout_weight="1" android:text="↑" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_end" style="@style/PcKey" android:layout_weight="1" android:text="End" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+        </LinearLayout>
+        <!-- Row 6 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+            <Button android:id="@+id/btn_drawer_keyboard" style="@style/PcKey" android:layout_weight="1.2" app:icon="@drawable/ic_menu" app:iconGravity="textStart" app:backgroundTint="#FF4081" app:iconTint="@color/white" />
+            <Button android:id="@+id/key_lctrl" style="@style/PcKey" android:layout_weight="1.5" android:text="Ctrl" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_lwin" style="@style/PcKey" android:layout_weight="1.2" android:text="Win" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_lalt" style="@style/PcKey" android:layout_weight="1.2" android:text="Alt" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_space" style="@style/PcKey" android:layout_weight="3.7" android:text="" app:backgroundTint="#1C3144" android:textColor="#FFFFFF" />
+            <Button android:id="@+id/key_ralt" style="@style/PcKey" android:layout_weight="1.2" android:text="Alt" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_fn" style="@style/PcKey" android:layout_weight="1.2" android:text="Fn" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_rctrl" style="@style/PcKey" android:layout_weight="1.2" android:text="Ctrl" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_left" style="@style/PcKey" android:layout_weight="1.0" android:text="&#8592;" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_down" style="@style/PcKey" android:layout_weight="1.0" android:text="&#8595;" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/key_right" style="@style/PcKey" android:layout_weight="1.0" android:text="&#8594;" app:backgroundTint="#A2C2E6" android:textColor="#000000" />
+            <Button android:id="@+id/btn_toggle_keyboard" style="@style/PcKey" android:layout_weight="1.2" app:icon="@drawable/keyboard_vector" app:iconGravity="textStart" app:backgroundTint="#4CAF50" app:iconTint="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

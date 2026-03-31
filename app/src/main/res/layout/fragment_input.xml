@@ -27,6 +27,21 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/white" />
 
+            <Button
+                android:id="@+id/btnTogglePcKeyboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="4dp"
+                android:text="↑ ↓"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/auto_mouse_cyan_dim"
+                app:icon="@drawable/keyboard_vector"
+                app:iconTint="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone" />
+
             <EditText
                 android:id="@+id/hiddenInput"
                 android:layout_width="1dp"

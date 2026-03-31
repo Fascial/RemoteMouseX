@@ -25,6 +25,8 @@ class AutoMouse : Fragment() {
     private var durationMinutes = 0
     private var durationSeconds = 0
     private var isEnabled = false
+    private var activePattern = AutoMouseService.PATTERN_SMOOTH_LINEAR
+    
     private val connectionManager = ConnectionManager.getInstance()
 
     override fun onCreateView(
@@ -55,40 +57,54 @@ class AutoMouse : Fragment() {
             }
         }
         
+        // Setup Run Infinitely Toggle
+        binding.runInfinitelyToggle.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.durationInputsLayout.visibility = View.GONE
+                durationMinutes = 0
+                durationSeconds = 0
+                updateInputFields()
+            } else {
+                binding.durationInputsLayout.visibility = View.VISIBLE
+            }
+            val updateSummary = {
+                updateConfigurationSummary()
+                if (isEnabled) updateServiceState()
+            }
+            updateSummary()
+        }
+
         // Settings always visible regardless of toggle state
         binding.settingsContainer.visibility = View.VISIBLE
 
         // Move interval controls
-        setupNumberField(
+        setupNumberFieldAdvanced(
             binding.moveIntervalInput,
-            binding.moveIntervalMinus,
-            binding.moveIntervalPlus,
-            moveInterval,
-            30, 200, 10,
+            binding.moveIntervalMinus, binding.moveIntervalMinus10,
+            binding.moveIntervalPlus, binding.moveIntervalPlus10,
+            moveInterval, 5, 200, 5, 25,
             { moveInterval = it }
         )
 
         // Click interval controls
-        setupNumberField(
+        setupNumberFieldAdvanced(
             binding.clickIntervalInput,
-            binding.clickIntervalMinus,
-            binding.clickIntervalPlus,
-            clickInterval,
-            500, 5000, 100,
+            binding.clickIntervalMinus, binding.clickIntervalMinus10,
+            binding.clickIntervalPlus, binding.clickIntervalPlus10,
+            clickInterval, 50, 5000, 50, 500,
             { clickInterval = it }
         )
 
         // Max distance controls
-        setupNumberField(
+        setupNumberFieldAdvanced(
             binding.maxDistanceInput,
-            binding.maxDistanceMinus,
-            binding.maxDistancePlus,
-            maxDistance.toLong(),
-            20, 200, 10,
+            binding.maxDistanceMinus, binding.maxDistanceMinus10,
+            binding.maxDistancePlus, binding.maxDistancePlus10,
+            maxDistance.toLong(), 5, 500, 5, 50,
             { maxDistance = it.toInt() }
         )
 
-        // Duration minute controls
+        // Duration minute controls (simple setup)
         setupNumberField(
             binding.durationMinutesInput,
             binding.durationMinutesMinus,
@@ -98,7 +114,7 @@ class AutoMouse : Fragment() {
             { durationMinutes = it.toInt() }
         )
 
-        // Duration second controls
+        // Duration second controls (simple setup)
         setupNumberField(
             binding.durationSecondsInput,
             binding.durationSecondsMinus,
@@ -108,40 +124,47 @@ class AutoMouse : Fragment() {
             { durationSeconds = it.toInt() }
         )
 
-        // Preset buttons for speed
-        binding.presetSlow.setOnClickListener {
-            moveInterval = 100L
-            clickInterval = 3000L
-            updateInputFields()
+        // Preset patterns
+        binding.presetSmoothLinear.setOnClickListener {
+            activePattern = AutoMouseService.PATTERN_SMOOTH_LINEAR
+            updatePatternSelectionUI()
+            if (isEnabled) updateServiceState()
+        }
+        binding.presetCircularTrace.setOnClickListener {
+            activePattern = AutoMouseService.PATTERN_CIRCULAR_TRACE
+            updatePatternSelectionUI()
+            if (isEnabled) updateServiceState()
+        }
+        binding.presetErraticJumps.setOnClickListener {
+            activePattern = AutoMouseService.PATTERN_ERRATIC_JUMPS
+            updatePatternSelectionUI()
+            if (isEnabled) updateServiceState()
+        }
+        binding.presetPatternRepeat.setOnClickListener {
+            activePattern = AutoMouseService.PATTERN_PATTERN_REPEAT
+            updatePatternSelectionUI()
             if (isEnabled) updateServiceState()
         }
 
-        binding.presetNormal.setOnClickListener {
-            moveInterval = 50L
-            clickInterval = 2000L
-            updateInputFields()
-            if (isEnabled) updateServiceState()
-        }
-
-        binding.presetFast.setOnClickListener {
-            moveInterval = 30L
-            clickInterval = 1000L
-            updateInputFields()
-            if (isEnabled) updateServiceState()
-        }
+        // Initial select
+        updatePatternSelectionUI()
 
         // Initialize configuration summary
         updateConfigurationSummary()
     }
 
-    private fun setupNumberField(
+    private fun updatePatternSelectionUI() {
+        binding.presetSmoothLinear.isSelected = activePattern == AutoMouseService.PATTERN_SMOOTH_LINEAR
+        binding.presetCircularTrace.isSelected = activePattern == AutoMouseService.PATTERN_CIRCULAR_TRACE
+        binding.presetErraticJumps.isSelected = activePattern == AutoMouseService.PATTERN_ERRATIC_JUMPS
+        binding.presetPatternRepeat.isSelected = activePattern == AutoMouseService.PATTERN_PATTERN_REPEAT
+    }
+
+    private fun setupNumberFieldAdvanced(
         editText: EditText,
-        minusBtn: Button,
-        plusBtn: Button,
-        initialValue: Long,
-        min: Long,
-        max: Long,
-        step: Long,
+        minusBtn: Button, minus10Btn: Button,
+        plusBtn: Button, plus10Btn: Button,
+        initialValue: Long, min: Long, max: Long, step: Long, largeStep: Long,
         onValueChange: (Long) -> Unit
     ) {
         editText.setText(initialValue.toString())
@@ -159,6 +182,14 @@ class AutoMouse : Fragment() {
             updateSummary()
         }
 
+        minus10Btn.setOnClickListener {
+            val current = editText.text.toString().toLongOrNull() ?: initialValue
+            val newValue = maxOf(min, current - largeStep)
+            editText.setText(newValue.toString())
+            onValueChange(newValue)
+            updateSummary()
+        }
+
         plusBtn.setOnClickListener {
             val current = editText.text.toString().toLongOrNull() ?: initialValue
             val newValue = minOf(max, current + step)
@@ -167,6 +198,54 @@ class AutoMouse : Fragment() {
             updateSummary()
         }
 
+        plus10Btn.setOnClickListener {
+            val current = editText.text.toString().toLongOrNull() ?: initialValue
+            val newValue = minOf(max, current + largeStep)
+            editText.setText(newValue.toString())
+            onValueChange(newValue)
+            updateSummary()
+        }
+
+        editText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val value = editText.text.toString().toLongOrNull() ?: initialValue
+                val clamped = value.coerceIn(min, max)
+                editText.setText(clamped.toString())
+                onValueChange(clamped)
+                updateSummary()
+            }
+        }
+    }
+
+    private fun setupNumberField(
+        editText: EditText,
+        minusBtn: Button,
+        plusBtn: Button,
+        initialValue: Long,
+        min: Long,
+        max: Long,
+        step: Long,
+        onValueChange: (Long) -> Unit
+    ) {
+        editText.setText(initialValue.toString())
+        val updateSummary = {
+            updateConfigurationSummary()
+            if (isEnabled) updateServiceState()
+        }
+        minusBtn.setOnClickListener {
+            val current = editText.text.toString().toLongOrNull() ?: initialValue
+            val newValue = maxOf(min, current - step)
+            editText.setText(newValue.toString())
+            onValueChange(newValue)
+            updateSummary()
+        }
+        plusBtn.setOnClickListener {
+            val current = editText.text.toString().toLongOrNull() ?: initialValue
+            val newValue = minOf(max, current + step)
+            editText.setText(newValue.toString())
+            onValueChange(newValue)
+            updateSummary()
+        }
         editText.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 val value = editText.text.toString().toLongOrNull() ?: initialValue
@@ -188,14 +267,15 @@ class AutoMouse : Fragment() {
     }
 
     private fun updateConfigurationSummary() {
-        val durationText = if (durationMinutes == 0 && durationSeconds == 0) {
-            "∞"
+        binding.summaryMove.text = "${moveInterval}ms"
+        binding.summaryClick.text = if (clickInterval >= 1000) "${clickInterval/1000f}s" else "${clickInterval}ms"
+        binding.summaryDist.text = "${maxDistance}px"
+
+        if (durationMinutes == 0 && durationSeconds == 0) {
+            binding.summaryDuration.text = "Unlimited"
         } else {
-            String.format("%02d:%02d", durationMinutes, durationSeconds)
+            binding.summaryDuration.text = String.format("%02d:%02d", durationMinutes, durationSeconds)
         }
-        
-        val summary = "Move: ${moveInterval}ms • Click: ${clickInterval}ms • Distance: ${maxDistance}px • Duration: $durationText"
-        binding.configSummary.text = summary
     }
 
     private fun checkConnectionExists(): Boolean {
@@ -229,6 +309,7 @@ class AutoMouse : Fragment() {
             intent.putExtra(AutoMouseService.EXTRA_CLICK_INTERVAL, clickInterval)
             intent.putExtra(AutoMouseService.EXTRA_MAX_DISTANCE, maxDistance)
             intent.putExtra(AutoMouseService.EXTRA_DURATION_SECONDS, totalSeconds)
+            intent.putExtra(AutoMouseService.EXTRA_PATTERN_TYPE, activePattern)
             
             try {
                 context.startService(intent)

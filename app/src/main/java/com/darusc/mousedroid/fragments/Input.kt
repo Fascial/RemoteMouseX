@@ -81,30 +81,47 @@ class Input: Fragment() {
         binding.btnOpenDrawer.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+        
+        binding.btnTogglePcKeyboard.setOnClickListener {
+            val isPortrait = resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
+            
+            if (isPortrait) {
+                // Force rotation to landscape
+                requireActivity().requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            } else {
+                // Return to portrait
+                requireActivity().requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
+        }
         binding.navigation.setNavigationItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.mode_touchpad -> {
                     item.isChecked = true
                     closeSoftKeyboard()
+                    binding.btnTogglePcKeyboard.visibility = View.GONE
                     replaceChildFragment(Touchpad())
                 }
                 R.id.mode_numpad -> {
                     item.isChecked = true
                     closeSoftKeyboard()
+                    binding.btnTogglePcKeyboard.visibility = View.GONE
                     replaceChildFragment(Numpad())
                 }
                 R.id.mode_automouse -> {
                     item.isChecked = true
                     closeSoftKeyboard()
+                    binding.btnTogglePcKeyboard.visibility = View.GONE
                     replaceChildFragment(AutoMouse())
                 }
                 R.id.mode_recorder -> {
                     item.isChecked = true
                     closeSoftKeyboard()
+                    binding.btnTogglePcKeyboard.visibility = View.GONE
                     replaceChildFragment(Recorder())
                 }
                 R.id.mode_keyboard -> {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    binding.btnTogglePcKeyboard.visibility = View.VISIBLE
                     openSoftKeyboard()
                     return@setNavigationItemSelectedListener true
                 }
@@ -208,15 +225,39 @@ class Input: Fragment() {
         view?.clearFocus()
     }
 
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        
+        // Ensure Drawer button is strictly visible in portrait logic
+        if (newConfig.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT || newConfig.orientation == android.content.res.Configuration.ORIENTATION_UNDEFINED) {
+            binding.btnOpenDrawer.visibility = View.VISIBLE
+            
+            // Only restore toggle button if the user is explicitly in "Keyboard" mode
+            if (binding.navigation.checkedItem?.itemId == R.id.mode_keyboard) {
+                binding.btnTogglePcKeyboard.visibility = View.VISIBLE
+            } else {
+                binding.btnTogglePcKeyboard.visibility = View.GONE
+            }
+            
+            val current = childFragmentManager.findFragmentById(R.id.fragment_container)
+            if (current is PcKeyboardFragment) {
+                replaceChildFragment(androidx.fragment.app.Fragment())
+                openSoftKeyboard()
+            }
+        } 
+        else if (newConfig.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
+            // Only auto-flip to PC Keyboard if the user is explicitly in "Keyboard" mode
+            if (binding.navigation.checkedItem?.itemId == R.id.mode_keyboard) {
+                closeSoftKeyboard()
+                binding.btnTogglePcKeyboard.visibility = View.GONE
+                binding.btnOpenDrawer.visibility = View.GONE
+                replaceChildFragment(PcKeyboardFragment())
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        
-        // Don't disconnect if AutoMouse is running
-        val prefs = requireContext().getSharedPreferences("automouse_state", android.content.Context.MODE_PRIVATE)
-        val isAutoMouseRunning = prefs.getBoolean("is_running", false)
-        
-        if (!isAutoMouseRunning) {
-            connectionViewModel.disconnect()
-        }
+        // Removed aggressive disconnection to prevent BT dropping on backgrounding/screen lock!
     }
 }

@@ -198,6 +198,26 @@ MouseBuster/
 
 ## Recent Updates
 
+### Version 3.5 (April 1, 2026)
+
+- **Stateful HID Peripheral Emulation** - Implemented a true hardware-level Bluetooth state manager
+  - Deprecated generic isolated click-events in favor of a persistent `KeyboardStateManager`
+  - Fully supports Multi-Touch functionality (e.g., physically holding `Ctrl` while tapping `A` and `C` simultaneously)
+  - Processes complex 8-byte HID reports encapsulating Modifier masks and up to 6 simultaneous Key Scancodes
+  - Installed ghosting protection: actively drops all held keys when rotating screens or opening navigation drawers
+  - Implemented real-time `CapsLock` state, toggling local button styling and visually shifting alphabet labels automatically
+- **Mechanical PC Keyboard Component Refactor** - Major aesthetic transformation
+  - Refactored `PcKeyboardFragment` to natively incorporate navigation functions directly into the spacebar row
+  - Restored authentic keycape color palettes (Light Blue modifiers, Deep Blue spacebar) eliminating background tint bleeding issues
+  - Swapped generic `onClick` observers with explicit `OnTouchListener` routing for precise ACTION_DOWN / ACTION_UP hardware simulation
+  - Intercepted and saved original modifier tint-states natively to prevent localized color lockups post-interaction
+- **Numpad Material Modernization**
+  - Eliminated bloated background drawables and migrated Numpad styles to pristine `MaterialButton` definitions
+  - Bound natively to the core app background yielding a clean, transparent visual flow
+  - Imposed precise `1dp` grey bounding box borders across all standard numerical keys
+  - Injected an active `1.5dp` stroked cyan anchor exclusively over the central `5` key
+  - Solved `MaterialButton` context collision to render Enter and Backspace as bold, solid cyan blocks
+
 ### Version 3.4 (March 30, 2026)
 
 - **Trackpad Recorder UI/UX Modernization** - Converted UI to a premium Voice Recorder aesthetic

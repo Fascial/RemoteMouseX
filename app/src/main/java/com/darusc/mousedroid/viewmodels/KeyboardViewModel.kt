@@ -50,4 +50,12 @@ class KeyboardViewModel : BaseViewModel<KeyboardViewModel.State, KeyboardViewMod
             }
         }
     }
+
+    fun sendRawKeys(modifier: Byte, code: Byte) {
+        connectionManager.send(InputEvent.KeyPress(listOf(com.darusc.mousedroid.layouts.KeyboardLayout.Key(modifier, code))))
+    }
+
+    fun sendState(keys: List<com.darusc.mousedroid.layouts.KeyboardLayout.Key>) {
+        connectionManager.send(InputEvent.KeyPress(keys))
+    }
 }
