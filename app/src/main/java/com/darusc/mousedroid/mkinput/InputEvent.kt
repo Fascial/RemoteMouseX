@@ -29,6 +29,22 @@ sealed class InputEvent : java.io.Serializable {
     data class Zoom(val scale: Int) : InputEvent()
 
     data class KeyPress(val keyList: List<KeyboardLayout.Key>) : InputEvent()
+    data class KeyboardState(val modifiers: Byte, val keys: ByteArray) : InputEvent() {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            other as KeyboardState
+            if (modifiers != other.modifiers) return false
+            if (!keys.contentEquals(other.keys)) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = modifiers.toInt()
+            result = 31 * result + keys.contentHashCode()
+            return result
+        }
+    }
     data class NumpadKeyPress(val key: Byte): InputEvent()
 
     data class MediaEvent(val action: MediaAction): InputEvent()

@@ -6,7 +6,7 @@ import com.darusc.mousedroid.layouts.KeyboardLayout
  * Stateful HID Report Generator as requested via the core HID logic rules.
  * Maintains a live physical state of up to 6 pressed scancodes and 1 combined modifier mask bit.
  */
-class KeyboardStateManager(private val sendCallback: (List<KeyboardLayout.Key>) -> Unit) {
+class KeyboardStateManager(private val sendCallback: (Byte, ByteArray) -> Unit) {
     
     private var currentModifiers: Byte = 0x00
     private val activeKeys = mutableSetOf<Byte>()
@@ -46,19 +46,6 @@ class KeyboardStateManager(private val sendCallback: (List<KeyboardLayout.Key>) 
 
     // Core Rule 1, 2, 3, 4: Compile and Send using active keys limit
     private fun sendReport() {
-        val keysList = activeKeys.map { code ->
-            KeyboardLayout.Key(0.toByte(), code)
-        }.toMutableList()
-
-        if (keysList.isEmpty()) {
-            // Sends [Type, Modifiers, 0x00...] representing only modifiers active
-            keysList.add(KeyboardLayout.Key(currentModifiers, 0x00.toByte()))
-        } else {
-            // Because Mousedroid's InputEvent.KeyPress loops and OR's the modifiers together across all keys,
-            // we attach the currentModifiers to the first key so the overall 8-byte payload computes correctly.
-            keysList[0] = KeyboardLayout.Key(currentModifiers, keysList[0].code)
-        }
-        
-        sendCallback(keysList)
+        sendCallback(currentModifiers, activeKeys.toByteArray())
     }
 }

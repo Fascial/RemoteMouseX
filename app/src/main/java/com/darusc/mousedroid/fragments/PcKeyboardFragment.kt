@@ -30,8 +30,8 @@ class PcKeyboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        stateManager = KeyboardStateManager { keys ->
-            keyboardViewModel.sendState(keys)
+        stateManager = KeyboardStateManager { modifiers, keys ->
+            keyboardViewModel.sendKeyboardState(modifiers, keys)
         }
 
         // Native Layout Injected Navigation logic

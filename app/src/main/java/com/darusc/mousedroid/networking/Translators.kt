@@ -140,6 +140,10 @@ fun InputEvent.toHIDReport(): Array<HIDReport> {
             )
         }
 
+        is InputEvent.KeyboardState -> {
+            arrayOf(KeyboardReport(this.modifiers, *this.keys))
+        }
+
         is InputEvent.MediaEvent -> {
             val bitmask = getMediaActionHIDBitmask(this.action)
             val byte0 = (bitmask.toInt() and 0xFF).toByte()
@@ -203,6 +207,16 @@ fun InputEvent.toSocketReport(): Array<ByteArray> {
 
         is InputEvent.NumpadKeyPress -> {
             socketReport(RawSocketEvents.KEYPRESS, this.key, 0x00)
+        }
+
+        is InputEvent.KeyboardState -> {
+            if (this.keys.isEmpty()) {
+                arrayOf(byteArrayOf(RawSocketEvents.KEYPRESS, 0x00, this.modifiers))
+            } else {
+                this.keys.map { key ->
+                    byteArrayOf(RawSocketEvents.KEYPRESS, key, this.modifiers)
+                }.toTypedArray()
+            }
         }
 
         is InputEvent.MediaEvent -> {

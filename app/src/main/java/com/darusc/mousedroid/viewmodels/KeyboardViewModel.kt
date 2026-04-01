@@ -58,4 +58,8 @@ class KeyboardViewModel : BaseViewModel<KeyboardViewModel.State, KeyboardViewMod
     fun sendState(keys: List<com.darusc.mousedroid.layouts.KeyboardLayout.Key>) {
         connectionManager.send(InputEvent.KeyPress(keys))
     }
+
+    fun sendKeyboardState(modifier: Byte, keys: ByteArray) {
+        connectionManager.send(InputEvent.KeyboardState(modifier, keys))
+    }
 }
