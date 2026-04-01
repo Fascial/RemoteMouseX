@@ -8,7 +8,7 @@ A Bluetooth HID remote control application for Android that allows you to contro
 
 - **Bluetooth HID Connectivity** - Connect to computers via Bluetooth HID (Human Input Device) profile
 - **Mouse Control** - Move the mouse cursor with precision
-- **Keyboard Input** - Send keyboard inputs and commands
+- **Keyboard Input** - Send keyboard inputs and commands, including continuous long presses
 - **Touchpad Mode** - Virtual touchpad for smooth cursor movement
 - **Numpad Mode** - Numeric keypad input
 - **Device Memory** - Save and remember paired devices
@@ -30,6 +30,7 @@ A Bluetooth HID remote control application for Android that allows you to contro
   - Save recordings to persistent storage immune to active list collisions
   - Dedicated Voice-Recorder style UI for management
 
+- **Background Operation** - The app now runs seamlessly as a foreground service, allowing for continuous Bluetooth HID connection and input handling even when the app is minimized or the screen is turned off.
 - **Connection Management** - Persistent Bluetooth connections with state tracking
 - **Crash Logging** - Built-in crash logger to diagnose issues
 
@@ -197,6 +198,14 @@ MouseBuster/
 - Handler/Looper: Scheduled mouse movement and clicks in AutoMouseService
 
 ## Recent Updates
+
+### Latest Updates
+
+- **Background Usage Support**
+  - Upgraded the app's architecture to run as a reliable foreground service.
+  - Bluetooth connections are now maintained even when the app is minimized or the screen is off, enabling persistent peripheral emulation.
+- **Enhanced Keyboard Engine**
+  - Resolved long-press action loops in the keyboard implementation. Holding a key now correctly registers as a sustained press on the host PC. 
 
 ### Version 3.5 (April 1, 2026)
 
