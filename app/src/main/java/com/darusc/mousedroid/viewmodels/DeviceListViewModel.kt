@@ -20,7 +20,7 @@ class DeviceListViewModel(
 ): BaseViewModel<DeviceListViewModel.State, DeviceListViewModel.Event>(State(emptyList())) {
 
     sealed class Event: BaseViewModel.Event()
-    data class State(val devices: List<Pair<String, String>>): BaseViewModel.State()
+    data class State(val devices: List<Pair<String, String>>, val isScanning: Boolean = false): BaseViewModel.State()
 
     private val connectionManager = ConnectionManager.getInstance()
 
@@ -50,6 +50,22 @@ class DeviceListViewModel(
 
     init {
         setState(State(devices))
+    }
+
+    fun addDevice(name: String, address: String) {
+        val currentList = state.value.devices.toMutableList()
+        if (currentList.none { it.second == address }) {
+            currentList.add(Pair(name, address))
+            setState(State(currentList, state.value.isScanning))
+        }
+    }
+
+    fun resetForScanning() {
+        setState(State(emptyList(), isScanning = true))
+    }
+
+    fun onScanFinished() {
+        setState(State(state.value.devices, isScanning = false))
     }
 
     @RequiresApi(Build.VERSION_CODES.P)

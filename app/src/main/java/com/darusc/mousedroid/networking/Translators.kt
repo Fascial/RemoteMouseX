@@ -46,19 +46,19 @@ private fun getMouseButtonHIDCode(button: InputEvent.MouseButton): Byte {
 
 /**
  * Transforms a media action into its corresponding bitmask.
- * The activated bit is the corresponding to the position
- * of the action in the descriptor listing
+ * Bit positions MUST match the exact order usages appear in the HID descriptor.
+ * Descriptor order: NextTrack, PrevTrack, Stop, Play/Pause, Mute, VolUp, VolDown, Home, ...
  */
 private fun getMediaActionHIDBitmask(action: InputEvent.MediaAction): Short {
     return when(action) {
-        InputEvent.MediaAction.FORWARD       -> 0b0000000000000001 // First in the descriptor listing
-        InputEvent.MediaAction.REPLAY        -> 0b0000000000000010 // Second in the descriptor listing
-        InputEvent.MediaAction.NEXT          -> 0b0000000000000100 // ...
-        InputEvent.MediaAction.PREVIOUS      -> 0b0000000000001000
-        InputEvent.MediaAction.PLAY_PAUSE    -> 0b0000000000010000
-        InputEvent.MediaAction.VOLUME_MUTE   -> 0b0000000000100000
-        InputEvent.MediaAction.VOLUME_UP     -> 0b0000000001000000
-        InputEvent.MediaAction.VOLUME_DOWN   -> 0b0000000010000000
+        InputEvent.MediaAction.FORWARD       -> 0x0001 // bit 0  = Scan Next Track  (0xB5)
+        InputEvent.MediaAction.REPLAY        -> 0x0002 // bit 1  = Scan Prev Track  (0xB6)
+        InputEvent.MediaAction.NEXT          -> 0x0001 // bit 0  = Scan Next Track  (same as FORWARD)
+        InputEvent.MediaAction.PREVIOUS      -> 0x0002 // bit 1  = Scan Prev Track  (same as REPLAY)
+        InputEvent.MediaAction.PLAY_PAUSE    -> 0x0008 // bit 3  = Play/Pause       (0xCD)
+        InputEvent.MediaAction.VOLUME_MUTE   -> 0x0010 // bit 4  = Mute             (0xE2)
+        InputEvent.MediaAction.VOLUME_UP     -> 0x0020 // bit 5  = Volume Increment (0xE9)
+        InputEvent.MediaAction.VOLUME_DOWN   -> 0x0040 // bit 6  = Volume Decrement (0xEA)
     }
 }
 

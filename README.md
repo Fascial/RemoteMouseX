@@ -7,10 +7,12 @@ A Bluetooth HID remote control application for Android that allows you to contro
 ### Core Features
 
 - **Bluetooth HID Connectivity** - Connect to computers via Bluetooth HID (Human Input Device) profile
+- **In-App Device Scanner** - Scan for and pair with nearby Bluetooth devices directly within the app
 - **Mouse Control** - Move the mouse cursor with precision
 - **Keyboard Input** - Send keyboard inputs and commands, including continuous long presses
 - **Touchpad Mode** - Virtual touchpad for smooth cursor movement
 - **Numpad Mode** - Numeric keypad input
+- **Media Controls** - Volume, mute, play/pause, next/prev track — all fully working
 - **Device Memory** - Save and remember paired devices
 
 ### Advanced Features
@@ -67,12 +69,20 @@ Or manually copy the APK file to your device and install through the file manage
 
 ## Usage
 
-### Pairing a Device
+### Pairing a New Device
 
-1. Open the app
-2. Tap "Device List" or the add device button
-3. Select your computer/device from the Bluetooth list
-4. Connection will be established automatically
+1. Open the app and grant Bluetooth & Location permissions when prompted
+2. Tap **"Pair"** on the main screen
+3. The app will automatically scan the room for nearby Bluetooth devices
+4. Devices appear in the list as they are discovered — tap any device to initiate pairing
+5. Approve the pairing dialogue on both devices
+6. Once bonded, the HID connection is established automatically
+
+### Connecting to an Already-Paired Device
+
+1. Tap **"Connect"** on the main screen
+2. Select your computer from the previously paired devices list
+3. Connection is established automatically
 
 ### Using Auto Mouse
 
@@ -139,11 +149,22 @@ Or manually copy the APK file to your device and install through the file manage
 - Check app was not forcefully stopped
 - Recordings are stored in app's internal directory
 
+**Media Buttons Not Working?**
+
+- After any app update that changes the HID descriptor, Windows caches the old driver. Go to **Device Manager → Bluetooth → your phone → Uninstall device**, then reconnect. Windows will re-download the updated descriptor.
+- Media keys require the `Consumer Control` HID usage page. Ensure no other Bluetooth HID driver is conflicting.
+
 **Permission Errors on Android 12+?**
 
-- Grant location permission (required for Bluetooth scanning)
-- Grant foreground service permission when prompted
-- The app requires `FOREGROUND_SERVICE_CONNECTED_DEVICE` permission
+- Grant **Bluetooth** (`BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN`) and **Location** (`ACCESS_FINE_LOCATION`) permissions when prompted on first launch
+- All permissions are requested together at startup; the app will not initialize Bluetooth until they are all granted
+- If you denied permissions, go to Settings → Apps → MouseBuster → Permissions and grant them manually
+
+**OEM Device (Oppo/Motorola) Instant Disconnect?**
+
+- These devices use strict Bluetooth stacks (ColorOS, MyUX) that require host-initiated pairing
+- Use the **Pair** button in the app and pair from your **Windows PC's Bluetooth settings**, not from the phone's native Bluetooth settings
+- Ensure the Windows HID descriptor cache is cleared (see Media Buttons section above)
 
 **Connection Lost During Recording?**
 
@@ -198,6 +219,28 @@ MouseBuster/
 - Handler/Looper: Scheduled mouse movement and clicks in AutoMouseService
 
 ## Recent Updates
+
+### Version 3.6 (April 3, 2026)
+
+- **In-App Bluetooth Device Scanner** - Rebuilt the pairing flow from the ground up
+  - Tap "Pair" to open an active scanner that discovers nearby Bluetooth devices in real-time
+  - Devices populate the list as they are found via `BluetoothDevice.ACTION_FOUND`
+  - Progress bar and status text show scanning state ("Searching..." → device count → "No devices found")
+  - Lifecycle-aware: `startDiscovery()` fires on open, `cancelDiscovery()` fires on back to save battery
+  - Tapping an un-paired device triggers native `createBond()` bonding, then connects automatically
+- **Fixed Media Key Bitmask Alignment** - All 8 media buttons now work correctly
+  - Corrected bit position mapping to exactly match the HID Report Descriptor usage ordering
+  - Fixed inverted Volume Up/Down and broken Play/Pause, Mute, Next/Prev assignments
+  - `MediaReport` now sends the correct 2-byte payload matching the `Report Count (16)` declaration
+  - SDP subclass updated to `SUBCLASS1_COMBO` to ensure Windows installs the full composite driver
+- **Fixed Startup Crash on Fresh Install** - `BluetoothAdapterWrapper.initialize()` now deferred until permissions are confirmed granted
+- **Expanded Runtime Permission Handling** - All required permissions requested together at startup
+  - Android 12+: `BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN`, `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`
+  - Android 11 and below: `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`
+- **HID Protocol Hardening** - Improved connection stability with strict Windows/OEM stacks
+  - `onGetReport` / `onSetReport` callbacks now respond correctly so Windows doesn't time out the link
+  - Precise `BluetoothHidDeviceAppQosSettings` values (Token Rate: 800, Latency: 11250, Delay: MAX)
+  - Restored full composite HID descriptor: Mouse + Keyboard + Media Keys
 
 ### Latest Updates
 
@@ -315,10 +358,13 @@ MouseBuster/
 
 ### Permissions Required
 
-- `BLUETOOTH` - Connect to Bluetooth devices
-- `BLUETOOTH_ADMIN` - Manage Bluetooth connections
+- `BLUETOOTH` - Legacy Bluetooth access (Android 11 and below)
+- `BLUETOOTH_ADMIN` - Manage Bluetooth connections and discoverability
 - `BLUETOOTH_CONNECT` - Android 12+ Bluetooth connectivity
+- `BLUETOOTH_SCAN` - Android 12+ device scanning and discovery
 - `BLUETOOTH_ADVERTISE` - Android 12+ Bluetooth advertising
+- `ACCESS_FINE_LOCATION` - Required for Bluetooth scanning (all Android versions)
+- `ACCESS_COARSE_LOCATION` - Required for Bluetooth scanning (all Android versions)
 - `FOREGROUND_SERVICE` - Run background service
 - `FOREGROUND_SERVICE_CONNECTED_DEVICE` - Android 12+ specific service type
 - `WAKE_LOCK` - Keep device awake during AutoMouse
@@ -330,6 +376,7 @@ MouseBuster/
 - Minimum SDK: 30 (Android 11)
 - Target SDK: 34 (Android 14)
 - Tested on: Android 11, 12, 13, 14
+- Compatible with OEM skins: Oppo ColorOS, Motorola MyUX, Samsung OneUI
 
 ## Known Issues
 

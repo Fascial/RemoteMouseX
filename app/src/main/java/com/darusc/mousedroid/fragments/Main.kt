@@ -28,6 +28,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.darusc.mousedroid.R
 import com.darusc.mousedroid.databinding.FragmentMainBinding
+import com.darusc.mousedroid.helpers.DebugLogger
 import com.darusc.mousedroid.networking.Connection
 import com.darusc.mousedroid.viewmodels.ConnectionViewModel
 import kotlinx.coroutines.launch
@@ -69,21 +70,28 @@ class Main : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.initBluetoothEarlyRegistration(requireContext())
+
         binding.btnConnectBT.setOnClickListener {
             viewModel.startBluetoothMode(requireContext())
         }
 
         binding.btnPairBT.setOnClickListener {
-            viewModel.startBluetoothMode(requireContext())
-            val intent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
-                putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120)
-            }
-            startActivity(intent)
+            viewModel.startPairingMode(requireContext())
         }
 
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    DebugLogger.logs.collect { logs ->
+                        binding.tvDebugLogs.text = logs.joinToString("\n")
+                        binding.logScrollView.post {
+                            binding.logScrollView.fullScroll(View.FOCUS_DOWN)
+                        }
+                    }
+                }
+
                 launch {
                     viewModel.state.collect {
                         when (it) {
@@ -108,7 +116,7 @@ class Main : Fragment() {
                             }
 
                             is ConnectionViewModel.Event.NavigateToDeviceList -> {
-                                findNavController().navigate(R.id.action_main_to_devicelist, bundleOf("CONNECTION_MODE" to it.mode))
+                                findNavController().navigate(R.id.action_main_to_devicelist, bundleOf("CONNECTION_MODE" to it.mode, "IS_PAIRING" to it.isPairing))
                             }
 
                             is ConnectionViewModel.Event.NavigateToMain -> {}
@@ -118,6 +126,7 @@ class Main : Fragment() {
                                 pview?.apply {
                                     findViewById<TextView>(R.id.subtitle).text = "Bluetooth connection to ${it.hostName} was terminated"
                                     findViewById<TextView>(R.id.description).text = "Host device turned bluetooth off or disconnected this device"
+                                    findViewById<TextView>(R.id.tvDebugLogs)?.text = com.darusc.mousedroid.helpers.DebugLogger.logs.value.joinToString("\n")
                                 }
                             }
 
@@ -126,6 +135,7 @@ class Main : Fragment() {
                                 pview?.apply {
                                     findViewById<TextView>(R.id.subtitle).text = "Bluetooth connection failed"
                                     findViewById<TextView>(R.id.description).text = "Make sure the device is on and in range"
+                                    findViewById<TextView>(R.id.tvDebugLogs)?.text = com.darusc.mousedroid.helpers.DebugLogger.logs.value.joinToString("\n")
                                 }
                             }
 

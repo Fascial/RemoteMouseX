@@ -40,13 +40,15 @@ class KeyboardReport(
 /**
  * Media HID report
  * @param bitmask The corresponding bitmask activating the bit corresponding to the media action
- * Uses 1 byte (8 bits) for media actions - Windows requires Report ID + 1 byte of data only
+ * Descriptor declares Report Count (16) with Report Size (1) = 16 bits = 2 bytes.
+ * Must send exactly 2 bytes or strict Windows HID drivers will silently reject the report.
  */
 class MediaReport(
     bitmask: Short
 ): HIDReport(
     byteArrayOf(
-        (bitmask.toInt() and 0xFF).toByte()  // Only lower byte (bits 0-7)
+        (bitmask.toInt() and 0xFF).toByte(),       // Lower byte (bits 0-7)
+        ((bitmask.toInt() shr 8) and 0xFF).toByte() // Upper byte (bits 8-15)
     ),
     REPORT_ID_MEDIA
 )

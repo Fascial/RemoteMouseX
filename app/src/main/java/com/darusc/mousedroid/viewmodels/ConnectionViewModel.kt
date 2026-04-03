@@ -27,7 +27,7 @@ class ConnectionViewModel :
         data class Navigate(@IdRes val id: Int) : Event()
         object NavigateToInput : Event()
         object NavigateToMain : Event()
-        data class NavigateToDeviceList(val mode: Connection.Mode) : Event()
+        data class NavigateToDeviceList(val mode: Connection.Mode, val isPairing: Boolean = false) : Event()
 
         object EnableBluetooth : Event()
 
@@ -39,7 +39,7 @@ class ConnectionViewModel :
 
     override fun onConnectionInitiated(mode: Connection.Mode) {
         if (state.value is State.Idle) {
-            setState(State.Connecting("Waiting for bluetooth connection..."))
+            setState(State.Connecting("Registering HID Profile..."))
         }
     }
 
@@ -61,17 +61,46 @@ class ConnectionViewModel :
     }
 
     /**
+     * Call this from MainActivity or ConnectionFragment as early as possible
+     * to register the HID Profile early and prevent race conditions.
+     */
+    fun initBluetoothEarlyRegistration(context: Context) {
+        try {
+            if (BluetoothAdapterWrapper.getInstance()?.isEnabled == true) {
+                connectionManager.registerBluetoothHID(context)
+            }
+        } catch (e: SecurityException) {
+            // Permission not granted yet, will be retrieved on user action
+        }
+    }
+
+    /**
      * Start bluetooth mode. Either starts a bluetooth enable intent
      * or redirects to the bluetooth device list
      */
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun startBluetoothMode(context: Context, afterEnableIntent: Boolean = false) {
-        if (afterEnableIntent || BluetoothAdapterWrapper.getInstance()?.isEnabled!!) {
+        if (afterEnableIntent || BluetoothAdapterWrapper.getInstance()?.isEnabled == true) {
             connectionManager.registerBluetoothHID(context)
             sendEvent(Event.NavigateToDeviceList(Connection.Mode.BLUETOOTH))
         } else {
             // Notify the fragment to start the bluetooth enable intent
             sendEvent(Event.EnableBluetooth)
+        }
+    }
+
+    /**
+     * Start pairing mode. Starts a bluetooth enable intent if needed,
+     * registers the HID SDP profile globally, but stays on the Main UI
+     * to await Host discovery.
+     */
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun startPairingMode(context: Context, afterEnableIntent: Boolean = false) {
+        if (afterEnableIntent || BluetoothAdapterWrapper.getInstance()?.isEnabled == true) {
+            connectionManager.registerBluetoothHID(context)
+            sendEvent(Event.NavigateToDeviceList(Connection.Mode.BLUETOOTH, true))
+        } else {
+            sendEvent(Event.EnableBluetooth) // Notify to request Bluetooth turn-on
         }
     }
 

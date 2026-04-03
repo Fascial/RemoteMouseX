@@ -41,6 +41,27 @@ class DeviceList : Fragment() {
     private val connectionMode: Connection.Mode
         get() = arguments?.getSerializable("CONNECTION_MODE") as Connection.Mode
 
+    private val isPairingMode: Boolean
+        get() = arguments?.getBoolean("IS_PAIRING", false) ?: false
+
+    private val bluetoothReceiver = object : android.content.BroadcastReceiver() {
+        @SuppressLint("MissingPermission")
+        override fun onReceive(context: android.content.Context, intent: android.content.Intent) {
+            when (intent.action) {
+                android.bluetooth.BluetoothDevice.ACTION_FOUND -> {
+                    val device: android.bluetooth.BluetoothDevice? = intent.getParcelableExtra(android.bluetooth.BluetoothDevice.EXTRA_DEVICE)
+                    device?.let {
+                        val name = it.name ?: "Unknown Device (${it.address.takeLast(5)})"
+                        deviceListViewModel.addDevice(name, it.address)
+                    }
+                }
+                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                    deviceListViewModel.onScanFinished()
+                }
+            }
+        }
+    }
+
     private val connectionViewModel: ConnectionViewModel by activityViewModels()
     private val deviceListViewModel: DeviceListViewModel by activityViewModels {
         val devices = BluetoothAdapterWrapper.getInstance()?.pairedDevices ?: emptySet()
@@ -66,8 +87,23 @@ class DeviceList : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (isPairingMode) {
+            val filter = android.content.IntentFilter().apply {
+                addAction(android.bluetooth.BluetoothDevice.ACTION_FOUND)
+                addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+            }
+            requireContext().registerReceiver(bluetoothReceiver, filter)
+            // Reset the state NOW, after collect{} will be set up shortly below.
+            // Use post to ensure the fragment's view collector is ready first.
+            binding.root.post {
+                deviceListViewModel.resetForScanning()
+                BluetoothAdapterWrapper.getInstance()?.adapter?.startDiscovery()
+            }
+        }
 
         deviceAdapter = DeviceAdapter(arrayListOf(), object : DeviceAdapter.OnItemClickListener {
             override fun onItemLongClick(position: Int) {
@@ -87,10 +123,23 @@ class DeviceList : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    deviceListViewModel.state.collect {
+                    deviceListViewModel.state.collect { state ->
                         deviceAdapter.devices.clear()
-                        deviceAdapter.devices.addAll(it.devices)
+                        deviceAdapter.devices.addAll(state.devices)
                         deviceAdapter.notifyDataSetChanged()
+
+                        // Show/hide scanning indicators
+                        val progressBar = binding.root.findViewById<android.widget.ProgressBar>(R.id.scanProgressBar)
+                        val tvStatus = binding.root.findViewById<android.widget.TextView>(R.id.tvScanStatus)
+                        if (state.isScanning) {
+                            progressBar?.visibility = View.VISIBLE
+                            tvStatus?.visibility = View.VISIBLE
+                            tvStatus?.text = if (state.devices.isEmpty()) "Searching for nearby devices..." else "Scanning... ${state.devices.size} found"
+                        } else {
+                            progressBar?.visibility = View.GONE
+                            tvStatus?.visibility = if (state.devices.isEmpty()) View.VISIBLE else View.GONE
+                            tvStatus?.text = "No devices found"
+                        }
                     }
                 }
 
@@ -114,12 +163,33 @@ class DeviceList : Fragment() {
                         when(it) {
                             is ConnectionViewModel.Event.NavigateToInput -> findNavController().navigate(R.id.action_devicelist_to_touchpad)
                             is ConnectionViewModel.Event.NavigateToMain -> findNavController().popBackStack(R.id.mainFragment, false)
-                            is ConnectionViewModel.Event.ConnectionDisconnected -> showPopupDialog(R.layout.connection_disconnected_fragment)
-                            is ConnectionViewModel.Event.ConnectionFailed -> showPopupDialog(R.layout.connection_failed_fragment)
+                            is ConnectionViewModel.Event.ConnectionDisconnected -> {
+                                val pview = showPopupDialog(R.layout.connection_disconnected_fragment)
+                                val logText = com.darusc.mousedroid.helpers.DebugLogger.logs.value.joinToString("\n")
+                                pview?.findViewById<TextView>(R.id.tvDebugLogs)?.text = if (logText.isBlank()) "LOGS EMPTY! StateFlow captured absolutely nothing." else logText
+                            }
+                            is ConnectionViewModel.Event.ConnectionFailed -> {
+                                val pview = showPopupDialog(R.layout.connection_failed_fragment)
+                                val logText = com.darusc.mousedroid.helpers.DebugLogger.logs.value.joinToString("\n")
+                                pview?.findViewById<TextView>(R.id.tvDebugLogs)?.text = if (logText.isBlank()) "LOGS EMPTY! StateFlow captured absolutely nothing." else logText
+                            }
                             else -> { }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (isPairingMode) {
+            try {
+                requireContext().unregisterReceiver(bluetoothReceiver)
+                BluetoothAdapterWrapper.getInstance()?.adapter?.cancelDiscovery()
+            } catch (e: IllegalArgumentException) {
+                // Receiver not registered
             }
         }
     }

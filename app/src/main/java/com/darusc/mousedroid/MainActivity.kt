@@ -30,12 +30,31 @@ class MainActivity : AppCompatActivity() {
             defaultHandler?.uncaughtException(thread, throwable)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2) {
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 1000)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val needsConnect = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+            val needsScan = ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED
+            if (needsConnect || needsScan) {
+                // Request all BT + location perms together. FINE_LOCATION is needed by some OEMs even on API 31+
+                ActivityCompat.requestPermissions(this, arrayOf(
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), 1000)
+                // Don't initialize yet — wait for grant result
+                return
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), 1000)
+                return
             }
         }
 
+        // All permissions already granted — initialize immediately
         BluetoothAdapterWrapper.initialize(applicationContext)
     }
 
@@ -48,8 +67,8 @@ class MainActivity : AppCompatActivity() {
         if(requestCode == 1000) {
             if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 AlertDialog.Builder(this)
-                    .setTitle("Bluetooth Permission Required")
-                    .setMessage("Please enable bluetooth permission in settings and restart the app.")
+                    .setTitle("Permissions Required")
+                    .setMessage("Please enable all required bluetooth and location permissions in settings and restart the app.")
                     .setPositiveButton("Go to settings") { _, _ ->
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                             data = Uri.fromParts("package", packageName, null)

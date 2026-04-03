@@ -78,6 +78,8 @@ class ConnectionManager private constructor() : Connection.Listener {
      * Register the bluetooth HID profile
      */
     fun registerBluetoothHID(context: Context) {
+        if (btConn != null) return
+
         CoroutineScope(Dispatchers.IO).launch {
             btConn = BluetoothConnection(context, this@ConnectionManager)
         }
