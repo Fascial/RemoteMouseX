@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewmodel"
-            type="com.darusc.mousedroid.viewmodels.RecorderViewModel" />
+            type="com.automouse.viewmodels.RecorderViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

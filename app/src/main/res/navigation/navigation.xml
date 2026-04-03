@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.darusc.mousedroid.fragments.Main"
+        android:name="com.automouse.fragments.Main"
         tools:layout="@layout/fragment_main">
 
         <action
@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/deviceListFragment"
-        android:name="com.darusc.mousedroid.fragments.DeviceList"
+        android:name="com.automouse.fragments.DeviceList"
         tools:layout="@layout/fragment_device_list">
 
         <action
@@ -33,7 +33,7 @@
 
     <fragment
         android:id="@+id/inputFragment"
-        android:name="com.darusc.mousedroid.fragments.Input"
+        android:name="com.automouse.fragments.Input"
         tools:layout="@layout/fragment_input">
 
     </fragment>

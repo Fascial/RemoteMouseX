@@ -29,7 +29,7 @@
         android:gravity="center"
         android:textColor="@color/md_theme_dark_error"
         app:layout_constraintTop_toBottomOf="@+id/title"
-        tools:text="Connection to Mousedroid server failed." />
+        tools:text="Connection to AutoMouse server failed." />
 
     <TextView
         android:id="@+id/description"
@@ -39,26 +39,6 @@
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/subtitle"
         tools:text="Make sure the server is on and you are on the same LAN." />
-
-    <ScrollView
-        android:id="@+id/logScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginTop="10dp"
-        android:background="#222222"
-        app:layout_constraintTop_toBottomOf="@+id/description"
-        app:layout_constraintBottom_toTopOf="@+id/btnOK" >
-
-        <TextView
-            android:id="@+id/tvDebugLogs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:padding="8dp"
-            android:textColor="#00FF00"
-            android:textSize="10sp"
-            android:text="FALLBACK: View inflated, but no logs injected!" />
-    </ScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnOK"
@@ -73,6 +53,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logScrollView" />
+        app:layout_constraintTop_toBottomOf="@+id/description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

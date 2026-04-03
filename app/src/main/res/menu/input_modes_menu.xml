@@ -10,10 +10,6 @@
                     android:title="Touchpad"
                     android:checked="true"/>
                 <item
-                    android:id="@+id/mode_numpad"
-                    android:icon="@drawable/ic_baseline_dialpad_24"
-                    android:title="Numpad" />
-                <item
                     android:id="@+id/mode_keyboard"
                     android:icon="@drawable/ic_baseline_keyboard_24"
                     android:title="Keyboard" />
@@ -29,7 +25,7 @@
         </menu>
     </item>
 
-    <item android:title="Session">1
+    <item android:title="Session">
         <menu>
             <item
                 android:id="@+id/mode_disconnect"
@@ -39,11 +35,4 @@
         </menu>
     </item>
 
-    <item android:title="Debug">
-        <menu>
-            <item
-                android:id="@+id/mode_crash_log"
-                android:title="View Crash Log"/>
-        </menu>
-    </item>
 </menu>

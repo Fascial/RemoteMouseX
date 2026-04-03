@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.darusc.mousedroid'
+    namespace 'com.automouse'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.darusc.mousedroid"
+        applicationId "com.automouse"
         minSdk 28
         targetSdk 34
         versionCode 5

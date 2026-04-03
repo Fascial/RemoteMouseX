@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewmodel"
-            type="com.darusc.mousedroid.viewmodels.TouchpadViewModel" />
+            type="com.automouse.viewmodels.TouchpadViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

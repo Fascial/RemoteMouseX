@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mousedroid</string>
+    <string name="app_name">AutoMouse</string>
     <string name="connectionLost">Server stopped responding!</string>
     <string name="connectionFailed">Connection failed!</string>
     <string name="format_recorded_events">Recorded Events: %d</string>

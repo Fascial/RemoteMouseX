@@ -1,0 +1,76 @@
+package com.automouse.viewmodels
+
+import android.Manifest
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothDevice
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.automouse.networking.Connection
+import com.automouse.networking.ConnectionManager
+
+/**
+ * @param devices The list of bluetooth devices
+ */
+class DeviceListViewModel(
+    private val devices: List<Pair<String, String>>
+): BaseViewModel<DeviceListViewModel.State, DeviceListViewModel.Event>(State(emptyList())) {
+
+    sealed class Event: BaseViewModel.Event()
+    data class State(val devices: List<Pair<String, String>>, val isScanning: Boolean = false): BaseViewModel.State()
+
+    private val connectionManager = ConnectionManager.getInstance()
+
+    class Factory: ViewModelProvider.Factory {
+
+        private val devices: List<Pair<String, String>>
+
+        /**
+         * Create the viewmodel for bluetooth mode.
+         * @param devices The list of paired bluetooth devices
+         */
+        @SuppressLint("MissingPermission")
+        constructor(devices: Set<BluetoothDevice>) {
+            this.devices = devices.map {
+                Pair(it.name?: "Unknown", it.address)
+            }
+        }
+
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if(modelClass.isAssignableFrom(DeviceListViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return DeviceListViewModel(devices) as T
+            }
+            throw IllegalArgumentException("Unknown viewmodel class")
+        }
+    }
+
+    init {
+        setState(State(devices))
+    }
+
+    fun addDevice(name: String, address: String) {
+        val currentList = state.value.devices.toMutableList()
+        if (currentList.none { it.second == address }) {
+            currentList.add(Pair(name, address))
+            setState(State(currentList, state.value.isScanning))
+        }
+    }
+
+    fun resetForScanning() {
+        setState(State(emptyList(), isScanning = true))
+    }
+
+    fun onScanFinished() {
+        setState(State(state.value.devices, isScanning = false))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun onDeviceClick(context: Context, name: String, address: String) {
+        connectionManager.connectBluetooth(address)
+    }
+}
