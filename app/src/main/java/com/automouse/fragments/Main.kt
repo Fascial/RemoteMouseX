@@ -134,10 +134,7 @@ class Main : Fragment() {
         // Load paired devices
         loadPairedDevices()
 
-        // Auto-connect to last connected device if available
-        if (!connectionManager.isConnected()) {
-            tryAutoConnect()
-        }
+        // Scan button
         binding.btnScan.setOnClickListener {
             if (isScanning) {
                 stopScanning()

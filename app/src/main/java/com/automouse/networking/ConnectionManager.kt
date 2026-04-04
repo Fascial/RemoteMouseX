@@ -14,9 +14,6 @@ class ConnectionManager private constructor() : Connection.Listener {
 
     companion object {
         private const val TAG = "ConnectionManager"
-        private const val PREFS_NAME = "mousebuster_connection"
-        private const val KEY_LAST_MAC = "last_connected_mac"
-        private const val KEY_LAST_NAME = "last_connected_name"
 
         @Volatile
         private var instance: ConnectionManager? = null
@@ -89,9 +86,6 @@ class ConnectionManager private constructor() : Connection.Listener {
         connected = true
         lastConnectedDeviceName = hostName
         connectionStateCallback?.onConnectionSuccessful(connectionMode, hostName)
-
-        // Persist last connected device for auto-connect on next app launch
-        saveLastConnectedDevice()
 
         // If we were reconnecting, notify the service
         appContext?.let { ctx ->
@@ -177,9 +171,6 @@ class ConnectionManager private constructor() : Connection.Listener {
     fun disconnectByUser() {
         isUserDisconnect = true
         Log.d(TAG, "User disconnect requested")
-
-        // Clear saved device so we don't auto-connect next launch
-        clearLastConnectedDevice()
 
         // Stop the connection service
         appContext?.let { ctx ->
@@ -274,39 +265,5 @@ class ConnectionManager private constructor() : Connection.Listener {
 
     fun isConnected(): Boolean {
         return connected && connection != null
-    }
-
-    // --- Persistence helpers for auto-connect ---
-
-    private fun saveLastConnectedDevice() {
-        appContext?.let { ctx ->
-            val prefs = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            prefs.edit()
-                .putString(KEY_LAST_MAC, lastConnectedMacAddress)
-                .putString(KEY_LAST_NAME, lastConnectedDeviceName)
-                .apply()
-            Log.d(TAG, "Saved last device: $lastConnectedDeviceName ($lastConnectedMacAddress)")
-        }
-    }
-
-    private fun clearLastConnectedDevice() {
-        appContext?.let { ctx ->
-            val prefs = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            prefs.edit()
-                .remove(KEY_LAST_MAC)
-                .remove(KEY_LAST_NAME)
-                .apply()
-            Log.d(TAG, "Cleared saved last device")
-        }
-    }
-
-    /**
-     * Returns the last connected device (name, mac) or null if none saved.
-     */
-    fun getLastConnectedDevice(context: Context): Pair<String, String>? {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val mac = prefs.getString(KEY_LAST_MAC, null) ?: return null
-        val name = prefs.getString(KEY_LAST_NAME, null) ?: "Unknown"
-        return Pair(name, mac)
     }
 }
