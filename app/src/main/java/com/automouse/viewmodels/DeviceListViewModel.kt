@@ -71,6 +71,8 @@ class DeviceListViewModel(
     @RequiresApi(Build.VERSION_CODES.P)
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun onDeviceClick(context: Context, name: String, address: String) {
-        connectionManager.connectBluetooth(address)
+        // Use unified workflow to ensure HID is properly registered
+        // This is the same path used by auto-reconnect
+        connectionManager.initiateConnection(context, address)
     }
 }

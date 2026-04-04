@@ -170,6 +170,9 @@ class Main : Fragment() {
                         Toast.makeText(context, "Not connected", Toast.LENGTH_SHORT).show()
                     }
                 }
+                R.id.mode_view_logs -> {
+                    showConnectionLogsDialog()
+                }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -187,6 +190,7 @@ class Main : Fragment() {
                             is ConnectionViewModel.State.Connecting -> {
                                 if (!loadingPopup.isShowing) {
                                     loadingPopup.contentView.findViewById<TextView>(R.id.loadingMessage).text = it.message
+                                    loadingPopup.contentView.findViewById<android.widget.Button>(R.id.cancelButton)?.visibility = View.GONE
                                     loadingPopup.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
                                 }
                             }
@@ -201,6 +205,17 @@ class Main : Fragment() {
                             is ConnectionViewModel.State.Reconnecting -> {
                                 loadingPopup.dismiss()
                                 updateDrawerConnectionStatus()
+                            }
+                            is ConnectionViewModel.State.AutoConnecting -> {
+                                if (!loadingPopup.isShowing) {
+                                    val cancelBtn = loadingPopup.contentView.findViewById<android.widget.Button>(R.id.cancelButton)
+                                    loadingPopup.contentView.findViewById<TextView>(R.id.loadingMessage).text = "Reconnecting to ${it.deviceName}..."
+                                    cancelBtn?.visibility = View.VISIBLE
+                                    cancelBtn?.setOnClickListener {
+                                        viewModel.cancelAutoConnect()
+                                    }
+                                    loadingPopup.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+                                }
                             }
                         }
                     }
@@ -332,10 +347,8 @@ class Main : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun connectToDevice(macAddress: String) {
-        // Register HID and connect
-        viewModel.initBluetoothEarlyRegistration(requireContext())
-        connectionManager.registerBluetoothHID(requireContext())
-        connectionManager.connectBluetooth(macAddress)
+        // Use unified connection workflow (same as auto-reconnect)
+        connectionManager.initiateConnection(requireContext(), macAddress)
     }
 
     private fun updateDrawerConnectionStatus() {
@@ -360,5 +373,46 @@ class Main : Fragment() {
         if (isScanning) {
             stopScanning()
         }
+    }
+
+    private fun showConnectionLogsDialog() {
+        val logs = connectionManager.getConnectionLogs()
+        val logText = if (logs.isEmpty()) {
+            "No logs recorded yet"
+        } else {
+            logs.joinToString("\n")
+        }
+
+        val scrollView = android.widget.ScrollView(requireContext()).apply {
+            layoutParams = android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+
+        val textView = TextView(requireContext()).apply {
+            text = logText
+            setPadding(20, 20, 20, 20)
+            textSize = 11f
+            setTextIsSelectable(true)
+            layoutParams = android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        scrollView.addView(textView)
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Connection Logs")
+            .setView(scrollView)
+            .setPositiveButton("Clear Logs") { _, _ ->
+                connectionManager.clearConnectionLogs()
+                Toast.makeText(context, "Logs cleared", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Close", null)
+            .show()
+
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
     }
 }

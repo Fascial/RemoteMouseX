@@ -1,42 +1,156 @@
-﻿WARNING: The following problems were found when resolving the SDK location:
-Where: sdk.dir property in local.properties file. Problem: Directory does not exist
+> Task :app:clean
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateDebugResValues
+> Task :app:dataBindingMergeDependencyArtifactsDebug
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:mergeDebugResources
+> Task :app:parseDebugLocalResources
+> Task :app:dataBindingTriggerDebug
+> Task :app:dataBindingGenBaseClassesDebug
+> Task :app:mapDebugSourceSetPaths
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:checkDebugAarMetadata
+> Task :app:extractDeepLinksDebug
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :app:javaPreCompileDebug
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets
+> Task :app:desugarDebugFileDependencies
+> Task :app:checkDebugDuplicateClasses
+> Task :app:processDebugResources
+> Task :app:mergeExtDexDebug
+> Task :app:mergeLibDexDebug
+> Task :app:mergeDebugJniLibFolders
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:buildKotlinToolingMetadata
+> Task :app:dataBindingMergeDependencyArtifactsRelease
+> Task :app:generateReleaseResValues
+> Task :app:generateReleaseResources
+> Task :app:mergeReleaseResources
+> Task :app:packageReleaseResources
+> Task :app:parseReleaseLocalResources
+> Task :app:dataBindingGenBaseClassesRelease
+> Task :app:dataBindingTriggerRelease
+> Task :app:checkReleaseAarMetadata
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :app:processReleaseManifestForPackage
 
-.\gradlew.bat : 
-At line:1 char:1
-+ .\gradlew.bat assembleDebug 
-2>&1 | Out-File -FilePath 
-build_output.tx ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : 
-NotSpe    cified: (:String) [], 
-RemoteExce    ption
-    + FullyQualifiedErrorId : 
-Native    CommandError
- 
-FAILURE: Build failed with an 
-exception.
+> Task :app:kaptGenerateStubsDebugKotlin
+w: Support for language version 2.0+ in kapt is in Alpha and must be enabled explicitly. Falling back to 1.9.
 
-* What went wrong:
-Could not determine the 
-dependencies of task 
-':app:compileDebugJavaWithJavac'.
-> SDK location not found. Define 
-a valid SDK location with an 
-ANDROID_HOME environment variable 
-or by setting the sdk.dir path in 
-your project's local properties 
-file at 'C:\Users\fasci\Programmin
-g_Files\Mousedroid\MouseBuster\loc
-al.properties'.
+> Task :app:processReleaseResources
+> Task :app:kaptDebugKotlin
 
-* Try:
-> Run with --stacktrace option to 
-get the stack trace.
-> Run with --info or --debug 
-option to get more log output.
-> Run with --scan to get full 
-insights.
-> Get more help at 
-https://help.gradle.org.
+> Task :app:kaptGenerateStubsReleaseKotlin
+w: Support for language version 2.0+ in kapt is in Alpha and must be enabled explicitly. Falling back to 1.9.
 
-BUILD FAILED in 1s
+> Task :app:compileDebugKotlin
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/fragments/DeviceList.kt:42:28 'fun getSerializable(p0: String?): Serializable?' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/fragments/DeviceList.kt:52:77 'fun <T : Parcelable!> getParcelableExtra(p0: String!): T?' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/fragments/Input.kt:201:67 'static field SHOW_FORCED: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/fragments/Recorder.kt:46:86 'static field VIBRATOR_SERVICE: String' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/layouts/languages/KeyboardLayoutFR.kt:226:7 Unchecked cast of 'kotlin.collections.Map<kotlin.Char, kotlin.Any>' to 'kotlin.collections.Map<kotlin.Char, kotlin.collections.List<com.automouse.layouts.KeyboardLayout.Key>>'.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/networking/ConnectionManager.kt:175:21 Condition is always 'true'.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/networking/bluetooth/BluetoothAdapterWrapper.kt:49:30 'static fun getDefaultAdapter(): BluetoothAdapter!' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/networking/bluetooth/BluetoothConnection.kt:243:36 This declaration needs opt-in. Its usage should be marked with '@kotlinx.coroutines.ExperimentalCoroutinesApi' or '@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)'
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/services/AutoMouseService.kt:308:13 Condition is always 'true'.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/services/AutoMouseService.kt:346:13 Condition is always 'true'.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:kaptReleaseKotlin
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:processDebugJavaRes
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+> Task :app:javaPreCompileRelease
+> Task :app:desugarReleaseFileDependencies
+> Task :app:mergeReleaseStartupProfile UP-TO-DATE
+> Task :app:mergeExtDexRelease
+> Task :app:mergeReleaseArtProfile
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:extractProguardFiles
+> Task :app:optimizeReleaseResources
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:preDebugAndroidTestBuild SKIPPED
+> Task :app:generateDebugAndroidTestResValues
+> Task :app:generateDebugAndroidTestLintModel
+> Task :app:generateDebugLintReportModel
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:generateDebugUnitTestLintModel
+
+> Task :app:compileReleaseKotlin
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/fragments/DeviceList.kt:42:28 'fun getSerializable(p0: String?): Serializable?' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/fragments/DeviceList.kt:52:77 'fun <T : Parcelable!> getParcelableExtra(p0: String!): T?' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/fragments/Input.kt:201:67 'static field SHOW_FORCED: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/fragments/Recorder.kt:46:86 'static field VIBRATOR_SERVICE: String' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/layouts/languages/KeyboardLayoutFR.kt:226:7 Unchecked cast of 'kotlin.collections.Map<kotlin.Char, kotlin.Any>' to 'kotlin.collections.Map<kotlin.Char, kotlin.collections.List<com.automouse.layouts.KeyboardLayout.Key>>'.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/networking/ConnectionManager.kt:175:21 Condition is always 'true'.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/networking/bluetooth/BluetoothAdapterWrapper.kt:49:30 'static fun getDefaultAdapter(): BluetoothAdapter!' is deprecated. Deprecated in Java.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/networking/bluetooth/BluetoothConnection.kt:243:36 This declaration needs opt-in. Its usage should be marked with '@kotlinx.coroutines.ExperimentalCoroutinesApi' or '@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)'
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/services/AutoMouseService.kt:308:13 Condition is always 'true'.
+w: file:///C:/Users/Musa/Projects/MouseBuster/app/src/main/java/com/automouse/services/AutoMouseService.kt:346:13 Condition is always 'true'.
+
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:dexBuilderRelease
+> Task :app:mergeDexRelease
+> Task :app:mergeReleaseGlobalSynthetics
+> Task :app:compileReleaseArtProfile
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease SKIPPED
+> Task :app:lintVitalRelease SKIPPED
+> Task :app:processReleaseJavaRes
+> Task :app:lintAnalyzeDebug
+> Task :app:mergeReleaseJavaResource
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
+> Task :app:assemble
+> Task :app:lintAnalyzeDebugAndroidTest
+> Task :app:lintAnalyzeDebugUnitTest
+
+> Task :app:lintReportDebug
+Wrote HTML report to file:///C:/Users/Musa/Projects/MouseBuster/app/build/reports/lint-results-debug.html
+
+> Task :app:lintDebug
+> Task :app:lint
+> Task :app:check
+> Task :app:build
+
+BUILD SUCCESSFUL in 20s
+96 actionable tasks: 95 executed, 1 up-to-date

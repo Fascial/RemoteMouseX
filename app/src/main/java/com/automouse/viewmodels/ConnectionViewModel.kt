@@ -24,6 +24,7 @@ class ConnectionViewModel :
         data class Connecting(val message: String) : State()
         data class Connected(val connectionMode: Connection.Mode, val hostName: String) : State()
         data class Reconnecting(val connectionMode: Connection.Mode) : State()
+        data class AutoConnecting(val deviceName: String) : State()
     }
 
     sealed class Event : BaseViewModel.Event() {
@@ -43,7 +44,12 @@ class ConnectionViewModel :
 
     override fun onConnectionInitiated(mode: Connection.Mode) {
         if (state.value is State.Idle) {
-            setState(State.Connecting("Registering HID Profile..."))
+            // Check if this is an auto-connect attempt
+            if (connectionManager.isAutoConnecting()) {
+                setState(State.AutoConnecting(connectionManager.lastConnectedDeviceName ?: "device"))
+            } else {
+                setState(State.Connecting("Registering HID Profile..."))
+            }
         }
     }
 
@@ -153,6 +159,23 @@ class ConnectionViewModel :
             connectionManager.disconnectByUser()
             setState(State.Idle)
             sendEvent(Event.NavigateToMain)
+        }
+    }
+
+    /**
+     * Called to notify that auto-connect is starting
+     */
+    fun notifyAutoConnectStart(deviceName: String) {
+        setState(State.AutoConnecting(deviceName))
+    }
+
+    /**
+     * Cancel auto-connect attempt
+     */
+    fun cancelAutoConnect() {
+        viewModelScope.launch {
+            connectionManager.cancelAutoConnect()
+            setState(State.Idle)
         }
     }
 }

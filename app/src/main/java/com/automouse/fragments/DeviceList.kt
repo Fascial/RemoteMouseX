@@ -150,6 +150,12 @@ class DeviceList : Fragment() {
                                     loadingPopup.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
                                 }
                             }
+                            is ConnectionViewModel.State.AutoConnecting -> {
+                                if (!loadingPopup.isShowing) {
+                                    loadingPopup.contentView.findViewById<TextView>(R.id.loadingMessage).text = "Reconnecting to ${it.deviceName}..."
+                                    loadingPopup.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+                                }
+                            }
                             is ConnectionViewModel.State.Idle -> loadingPopup.dismiss()
                             is ConnectionViewModel.State.Connected -> loadingPopup.dismiss()
                             is ConnectionViewModel.State.Reconnecting -> loadingPopup.dismiss()

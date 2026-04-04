@@ -22,4 +22,5 @@ abstract class Connection {
 
     abstract fun send(event: InputEvent)
     abstract fun close()
+    abstract fun isClosed(): Boolean
 }

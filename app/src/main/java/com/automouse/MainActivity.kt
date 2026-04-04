@@ -8,12 +8,23 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import android.provider.Settings
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.automouse.networking.ConnectionManager
 import com.automouse.networking.bluetooth.BluetoothAdapterWrapper
+import com.automouse.viewmodels.ConnectionViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // All permissions already granted — initialize immediately
-        BluetoothAdapterWrapper.initialize(applicationContext)
+        onPermissionsGranted()
     }
 
     override fun onRequestPermissionsResult(
@@ -65,8 +76,46 @@ class MainActivity : AppCompatActivity() {
                     .setNegativeButton("Cancel", null)
                     .show()
             } else {
-                BluetoothAdapterWrapper.initialize(applicationContext)
+                onPermissionsGranted()
             }
+        }
+    }
+
+    private fun onPermissionsGranted() {
+        BluetoothAdapterWrapper.initialize(applicationContext)
+        
+        // Attempt to auto-connect to remembered device
+        attemptAutoConnect()
+    }
+
+    private fun attemptAutoConnect() {
+        CoroutineScope(Dispatchers.IO).launch {
+            // Give the BluetoothAdapter a moment to initialize
+            delay(500)
+            
+            val connectionManager = ConnectionManager.getInstance()
+            
+            // Load the remembered device first
+            val (macAddress, deviceName) = connectionManager.loadRememberedDevice() ?: run {
+                Log.d(TAG, "No remembered device found")
+                return@launch
+            }
+            
+            if (macAddress == null) {
+                Log.d(TAG, "No remembered device MAC address found")
+                return@launch
+            }
+            
+            Log.d(TAG, "Attempting to auto-connect to $deviceName ($macAddress)")
+            
+            // Mark as auto-connecting
+            connectionManager.setAutoConnecting(true)
+            
+            // Use unified connection workflow (exact same as manual connect)
+            connectionManager.initiateConnection(applicationContext, macAddress)
+            
+            // Mark as not auto-connecting after connection is initiated
+            connectionManager.setAutoConnecting(false)
         }
     }
 }

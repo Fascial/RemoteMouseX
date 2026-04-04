@@ -38,4 +38,13 @@
         </menu>
     </item>
 
+    <item android:title="Debug">
+        <menu>
+            <item
+                android:id="@+id/mode_view_logs"
+                android:title="View Connection Logs"
+                android:icon="@drawable/baseline_bluetooth_24" />
+        </menu>
+    </item>
+
 </menu>
