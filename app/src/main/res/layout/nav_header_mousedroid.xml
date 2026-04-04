@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#1A1A1A"
+    android:background="@color/auto_mouse_bg"
     android:orientation="vertical"
     android:padding="24dp">
 
@@ -19,6 +19,7 @@
         android:gravity="center_vertical">
 
         <View
+            android:id="@+id/connectionDot"
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:background="@drawable/circle_green" />
@@ -28,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Connected to PC-MASTER"
+            android:text="Not connected"
             android:textColor="#BBBBBB"
             android:textSize="14sp" />
     </LinearLayout>

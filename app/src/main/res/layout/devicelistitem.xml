@@ -3,49 +3,54 @@
     android:id="@+id/deviceWrapper"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="75dp"
-    android:background="@drawable/item_shape"
+    android:layout_height="wrap_content"
+    android:background="@drawable/device_card_bg"
     android:foreground="?attr/selectableItemBackground"
-    android:padding="15dp"
-    android:layout_marginBottom="15dp"
-    android:clickable="true">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
+    android:layout_marginBottom="10dp"
+    android:clickable="true"
+    android:focusable="true">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:layout_marginEnd="10dp"
-        android:src="@drawable/desktop_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <LinearLayout
+        android:id="@+id/deviceInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tapToConnect">
+
+        <TextView
+            android:id="@+id/device_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/card_text"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/device_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/card_text2"
+            android:textSize="13sp"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/device_name"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="4dp"
-        android:gravity="bottom"
-        android:textColor="@color/card_text"
-        android:textSize="18sp"
+        android:id="@+id/tapToConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tap to connect"
+        android:textColor="@color/auto_mouse_cyan"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.4"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/device_address"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:textColor="@color/card_text2"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@+id/device_name"
-        app:layout_constraintStart_toStartOf="@+id/device_name"
-        app:layout_constraintTop_toBottomOf="@+id/device_name"
-        app:layout_constraintHeight_percent="0.4"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

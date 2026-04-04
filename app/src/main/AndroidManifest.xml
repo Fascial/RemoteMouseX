@@ -39,6 +39,11 @@
             android:name="com.automouse.services.AutoMouseService"
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />
+
+        <service
+            android:name="com.automouse.services.BluetoothConnectionService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
     </application>
 
 </manifest>

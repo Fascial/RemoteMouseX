@@ -152,6 +152,7 @@ class DeviceList : Fragment() {
                             }
                             is ConnectionViewModel.State.Idle -> loadingPopup.dismiss()
                             is ConnectionViewModel.State.Connected -> loadingPopup.dismiss()
+                            is ConnectionViewModel.State.Reconnecting -> loadingPopup.dismiss()
                         }
                     }
                 }

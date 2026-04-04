@@ -7,8 +7,7 @@
                 <item
                     android:id="@+id/mode_touchpad"
                     android:icon="@drawable/ic_touchpad"
-                    android:title="Touchpad"
-                    android:checked="true"/>
+                    android:title="Touchpad" />
                 <item
                     android:id="@+id/mode_keyboard"
                     android:icon="@drawable/ic_baseline_keyboard_24"

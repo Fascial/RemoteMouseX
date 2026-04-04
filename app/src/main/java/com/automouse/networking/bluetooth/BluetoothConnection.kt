@@ -75,6 +75,7 @@ class BluetoothConnection(
                 BluetoothProfile.STATE_CONNECTING -> {}
 
                 BluetoothProfile.STATE_CONNECTED -> {
+                    connectionEstablished = true
                     listener.onConnected(Mode.BLUETOOTH, bluetoothHostDevice?.name ?: "Unknown device")
                 }
 

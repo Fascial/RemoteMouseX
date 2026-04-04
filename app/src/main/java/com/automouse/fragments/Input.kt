@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -25,6 +26,7 @@ import com.automouse.R
 import com.automouse.databinding.FragmentInputBinding
 import com.automouse.mkinput.KeyboardInputWatcher
 import com.automouse.networking.Connection
+import com.automouse.services.BluetoothConnectionService
 import com.automouse.viewmodels.ConnectionViewModel
 import com.automouse.viewmodels.KeyboardViewModel
 import kotlinx.coroutines.launch
@@ -119,6 +121,10 @@ class Input: Fragment() {
                     connectionViewModel.disconnect()
                     findNavController().navigateUp()
                 }
+                R.id.mode_connection -> {
+                    closeSoftKeyboard()
+                    findNavController().popBackStack(R.id.mainFragment, false)
+                }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -134,6 +140,16 @@ class Input: Fragment() {
                                     .getHeaderView(0)
                                     .findViewById<TextView>(R.id.connectionStatus)
                                     .text = "Connected to ${it.hostName}"
+
+                                // Start the foreground service to keep connection alive
+                                connectionViewModel.startConnectionService(requireContext(), it.hostName)
+                            }
+                            is ConnectionViewModel.State.Reconnecting -> {
+                                binding.navigation
+                                    .getHeaderView(0)
+                                    .findViewById<TextView>(R.id.connectionStatus)
+                                    .text = "Reconnecting..."
+                                Toast.makeText(context, "Connection lost. Reconnecting...", Toast.LENGTH_SHORT).show()
                             }
                             else -> {}
                         }
@@ -148,13 +164,19 @@ class Input: Fragment() {
                             is ConnectionViewModel.Event.ConnectionDisconnected -> {
                                 showPopupDialog(R.layout.connection_disconnected_fragment)?.apply {
                                     findViewById<TextView>(R.id.subtitle).text = "Bluetooth connection to ${it.hostName} was terminated"
-                                    findViewById<TextView>(R.id.description).text = "Host device turned bluetooth off or disconnected this device"
+                                    findViewById<TextView>(R.id.description).text = "You manually disconnected from this device"
                                 }
                             }
                             is ConnectionViewModel.Event.ConnectionFailed -> {
                                 showPopupDialog(R.layout.connection_failed_fragment)?.apply {
                                     findViewById<TextView>(R.id.subtitle).text = "Bluetooth connection failed"
                                     findViewById<TextView>(R.id.description).text = "Make sure the device is on and in range"
+                                }
+                            }
+                            is ConnectionViewModel.Event.ReconnectFailed -> {
+                                showPopupDialog(R.layout.connection_failed_fragment)?.apply {
+                                    findViewById<TextView>(R.id.subtitle).text = "Reconnection failed"
+                                    findViewById<TextView>(R.id.description).text = "Could not reconnect after multiple attempts. Please reconnect manually."
                                 }
                             }
                             else -> { }

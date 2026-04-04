@@ -2,6 +2,7 @@ package com.automouse.viewmodels
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
@@ -11,6 +12,7 @@ import com.automouse.getDeviceDetails
 import com.automouse.networking.Connection
 import com.automouse.networking.ConnectionManager
 import com.automouse.networking.bluetooth.BluetoothAdapterWrapper
+import com.automouse.services.BluetoothConnectionService
 import kotlinx.coroutines.launch
 
 class ConnectionViewModel :
@@ -21,6 +23,7 @@ class ConnectionViewModel :
         object Idle : State()
         data class Connecting(val message: String) : State()
         data class Connected(val connectionMode: Connection.Mode, val hostName: String) : State()
+        data class Reconnecting(val connectionMode: Connection.Mode) : State()
     }
 
     sealed class Event : BaseViewModel.Event() {
@@ -33,6 +36,7 @@ class ConnectionViewModel :
 
         data class ConnectionFailed(val connectionMode: Connection.Mode) : Event()
         data class ConnectionDisconnected(val connectionMode: Connection.Mode, val hostName: String) : Event()
+        data class ReconnectFailed(val connectionMode: Connection.Mode) : Event()
     }
 
     private val connectionManager = ConnectionManager.getInstance(this)
@@ -45,7 +49,11 @@ class ConnectionViewModel :
 
     override fun onConnectionSuccessful(connectionMode: Connection.Mode, hostName: String) {
         setState(State.Connected(connectionMode, hostName))
-        sendEvent(Event.NavigateToInput)
+
+        // Only navigate to input if we're not already there (i.e., not a reconnect)
+        if (state.value !is State.Reconnecting) {
+            sendEvent(Event.NavigateToInput)
+        }
     }
 
     override fun onConnectionFailed(connectionMode: Connection.Mode) {
@@ -54,9 +62,21 @@ class ConnectionViewModel :
     }
 
     override fun onDisconnected(connectionMode: Connection.Mode, hostName: String) {
-        // Hardware link was lost (e.g host device's bluetooth was turned off)
+        // This is only called for user-initiated disconnects now
         setState(State.Idle)
         sendEvent(Event.ConnectionDisconnected(connectionMode, hostName))
+        sendEvent(Event.NavigateToMain)
+    }
+
+    override fun onReconnecting(connectionMode: Connection.Mode) {
+        // Connection dropped unexpectedly, auto-reconnect started
+        setState(State.Reconnecting(connectionMode))
+    }
+
+    override fun onReconnectFailed(connectionMode: Connection.Mode) {
+        // All retry attempts exhausted
+        setState(State.Idle)
+        sendEvent(Event.ReconnectFailed(connectionMode))
         sendEvent(Event.NavigateToMain)
     }
 
@@ -105,11 +125,32 @@ class ConnectionViewModel :
     }
 
     /**
+     * Start the foreground connection service after a successful connection.
+     * Should be called from a fragment/activity that has a Context.
+     */
+    fun startConnectionService(context: Context, hostName: String) {
+        try {
+            val intent = Intent(context, BluetoothConnectionService::class.java).apply {
+                action = BluetoothConnectionService.ACTION_START
+                putExtra(BluetoothConnectionService.EXTRA_DEVICE_NAME, hostName)
+                putExtra(BluetoothConnectionService.EXTRA_MAC_ADDRESS, connectionManager.lastConnectedMacAddress)
+            }
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+        } catch (e: Exception) {
+            // Non-fatal: connection still works, just no background persistence
+        }
+    }
+
+    /**
      * Should be called only when the user requests a manual disconnect
      */
     fun disconnect() {
         viewModelScope.launch {
-            connectionManager.disconnect()
+            connectionManager.disconnectByUser()
             setState(State.Idle)
             sendEvent(Event.NavigateToMain)
         }
