@@ -22,8 +22,29 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
+    interface PermissionResultListener {
+        fun onBluetoothPermissionsGranted()
+    }
+
+    private var permissionListener: PermissionResultListener? = null
+
+    fun setPermissionListener(listener: PermissionResultListener?) {
+        permissionListener = listener
+    }
+
     companion object {
         private const val TAG = "MainActivity"
+    }
+
+    private fun allRequestPermissionsGranted(
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ): Boolean {
+        if (grantResults.isEmpty() || permissions.size != grantResults.size) return false
+        for (i in grantResults.indices) {
+            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) return false
+        }
+        return true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,8 +83,8 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == 1000) {
-            if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == 1000) {
+            if (!allRequestPermissionsGranted(permissions, grantResults)) {
                 AlertDialog.Builder(this)
                     .setTitle("Permissions Required")
                     .setMessage("Please enable all required bluetooth and location permissions in settings and restart the app.")
@@ -77,45 +98,76 @@ class MainActivity : AppCompatActivity() {
                     .show()
             } else {
                 onPermissionsGranted()
+                permissionListener?.onBluetoothPermissionsGranted()
             }
         }
     }
 
     private fun onPermissionsGranted() {
-        BluetoothAdapterWrapper.initialize(applicationContext)
-        
-        // Attempt to auto-connect to remembered device
-        attemptAutoConnect()
+        try {
+            BluetoothAdapterWrapper.initialize(applicationContext)
+            
+            // CRITICAL: Add delay to let Android Bluetooth cache refresh after permissions granted
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    delay(1000)  // Wait 1 second for Bluetooth stack to update
+
+                    // Attempt to auto-connect to remembered device (with error handling)
+                    attemptAutoConnect()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error during auto-connect: ${e.message}")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in onPermissionsGranted: ${e.message}")
+        }
+    }
+
+    @android.annotation.SuppressLint("MissingPermission")
+    private fun startBluetoothDiscovery() {
+        val adapter = BluetoothAdapterWrapper.getInstance()?.adapter
+        if (adapter?.isEnabled == true) {
+            Log.d(TAG, "Starting Bluetooth discovery")
+            try {
+                adapter.startDiscovery()
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to start discovery", e)
+            }
+        }
     }
 
     private fun attemptAutoConnect() {
         CoroutineScope(Dispatchers.IO).launch {
-            // Give the BluetoothAdapter a moment to initialize
-            delay(500)
-            
-            val connectionManager = ConnectionManager.getInstance()
-            
-            // Load the remembered device first
-            val (macAddress, deviceName) = connectionManager.loadRememberedDevice() ?: run {
-                Log.d(TAG, "No remembered device found")
-                return@launch
+            try {
+                // Give the BluetoothAdapter a moment to initialize
+                delay(500)
+                
+                val connectionManager = ConnectionManager.getInstance()
+                
+                // Load the remembered device first
+                val (macAddress, deviceName) = connectionManager.loadRememberedDevice() ?: run {
+                    Log.d(TAG, "No remembered device found")
+                    return@launch
+                }
+                
+                if (macAddress == null) {
+                    Log.d(TAG, "No remembered device MAC address found")
+                    return@launch
+                }
+                
+                Log.d(TAG, "Attempting to auto-connect to $deviceName ($macAddress)")
+                
+                // Mark as auto-connecting
+                connectionManager.setAutoConnecting(true)
+                
+                // Use unified connection workflow (exact same as manual connect)
+                connectionManager.initiateConnection(applicationContext, macAddress)
+                
+                // Mark as not auto-connecting after connection is initiated
+                connectionManager.setAutoConnecting(false)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error during auto-connect: ${e.message}", e)
             }
-            
-            if (macAddress == null) {
-                Log.d(TAG, "No remembered device MAC address found")
-                return@launch
-            }
-            
-            Log.d(TAG, "Attempting to auto-connect to $deviceName ($macAddress)")
-            
-            // Mark as auto-connecting
-            connectionManager.setAutoConnecting(true)
-            
-            // Use unified connection workflow (exact same as manual connect)
-            connectionManager.initiateConnection(applicationContext, macAddress)
-            
-            // Mark as not auto-connecting after connection is initiated
-            connectionManager.setAutoConnecting(false)
         }
     }
 }

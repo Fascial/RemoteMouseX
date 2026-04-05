@@ -91,16 +91,24 @@ class DeviceList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (isPairingMode) {
-            val filter = android.content.IntentFilter().apply {
-                addAction(android.bluetooth.BluetoothDevice.ACTION_FOUND)
-                addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-            }
-            requireContext().registerReceiver(bluetoothReceiver, filter)
-            binding.root.post {
+        // Register broadcast receiver for device discovery (applies to both modes)
+        val filter = android.content.IntentFilter().apply {
+            addAction(android.bluetooth.BluetoothDevice.ACTION_FOUND)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+        }
+        requireContext().registerReceiver(bluetoothReceiver, filter)
+
+        // Auto-start scanning in both connection and pairing modes
+        binding.root.post {
+            if (isPairingMode) {
+                // Pairing mode: clear list and scan
                 deviceListViewModel.resetForScanning()
-                BluetoothAdapterWrapper.getInstance()?.adapter?.startDiscovery()
+            } else {
+                // Connection mode: show paired devices AND start scanning (without clearing)
+                deviceListViewModel.loadPairedDevices()
+                deviceListViewModel.startScanning()
             }
+            BluetoothAdapterWrapper.getInstance()?.adapter?.startDiscovery()
         }
 
         deviceAdapter = DeviceAdapter(arrayListOf(), object : DeviceAdapter.OnItemClickListener {
@@ -191,13 +199,11 @@ class DeviceList : Fragment() {
     @SuppressLint("MissingPermission")
     override fun onDestroyView() {
         super.onDestroyView()
-        if (isPairingMode) {
-            try {
-                requireContext().unregisterReceiver(bluetoothReceiver)
-                BluetoothAdapterWrapper.getInstance()?.adapter?.cancelDiscovery()
-            } catch (e: IllegalArgumentException) {
-                // Receiver not registered
-            }
+        try {
+            requireContext().unregisterReceiver(bluetoothReceiver)
+            BluetoothAdapterWrapper.getInstance()?.adapter?.cancelDiscovery()
+        } catch (e: IllegalArgumentException) {
+            // Receiver not registered
         }
     }
 }

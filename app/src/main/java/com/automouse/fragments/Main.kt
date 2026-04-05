@@ -11,6 +11,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.automouse.MainActivity
 import com.automouse.R
 import com.automouse.adapters.DeviceAdapter
 import com.automouse.databinding.FragmentMainBinding
@@ -37,9 +39,16 @@ import com.automouse.networking.Connection
 import com.automouse.networking.ConnectionManager
 import com.automouse.networking.bluetooth.BluetoothAdapterWrapper
 import com.automouse.viewmodels.ConnectionViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 class Main : Fragment() {
+
+    companion object {
+        private const val TAG = "Main"
+        private const val DISCOVERY_TIMEOUT_MS = 15_000L
+    }
 
     private lateinit var binding: FragmentMainBinding
     private lateinit var loadingPopup: PopupWindow
@@ -51,9 +60,13 @@ class Main : Fragment() {
     private lateinit var availableAdapter: DeviceAdapter
 
     private val pairedDevices = ArrayList<Pair<String, String>>()
+    /** MAC address → (display name, address); insertion order = discovery order */
+    private val availableByMac = LinkedHashMap<String, Pair<String, String>>()
     private val availableDevices = ArrayList<Pair<String, String>>()
 
     private var isScanning = false
+    private var receiverRegistered = false
+    private var discoveryTimeoutJob: Job? = null
 
     @SuppressLint("MissingPermission")
     private val enableBluetoothLauncher =
@@ -69,25 +82,26 @@ class Main : Fragment() {
     private val bluetoothReceiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
         override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                BluetoothDevice.ACTION_FOUND -> {
-                    @Suppress("DEPRECATION")
-                    val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                    device?.let {
-                        val name = it.name ?: "Unknown Device (${it.address.takeLast(5)})"
-                        val address = it.address
-                        // Don't add if already in paired or available list
-                        if (pairedDevices.none { d -> d.second == address } &&
-                            availableDevices.none { d -> d.second == address }) {
-                            availableDevices.add(Pair(name, address))
-                            availableAdapter.notifyItemInserted(availableDevices.size - 1)
-                            updateAvailableVisibility()
-                        }
+            try {
+                // Safety check: ignore events if fragment is not attached
+                if (!isAdded || view == null) {
+                    return
+                }
+
+                when (intent.action) {
+                    BluetoothDevice.ACTION_FOUND,
+                    BluetoothDevice.ACTION_NAME_CHANGED -> {
+                        @Suppress("DEPRECATION")
+                        val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                        device?.let { updateOrAddDevice(it) }
+                    }
+                    BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                        stopScanning()
                     }
                 }
-                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
-                    stopScanning()
-                }
+            } catch (e: Exception) {
+                // Fragment may have been destroyed, silently ignore
+                android.util.Log.d("Main", "BroadcastReceiver error: ${e.message}")
             }
         }
     }
@@ -131,8 +145,33 @@ class Main : Fragment() {
         binding.recyclerAvailable.layoutManager = LinearLayoutManager(context)
         binding.recyclerAvailable.adapter = availableAdapter
 
-        // Load paired devices
-        loadPairedDevices()
+        (activity as? MainActivity)?.setPermissionListener(object : MainActivity.PermissionResultListener {
+            override fun onBluetoothPermissionsGranted() {
+                if (!isAdded || view == null) return
+                try {
+                    if (!isScanning) startScanning()
+                } catch (e: Exception) {
+                    android.util.Log.d("Main", "Error starting scan after permissions: ${e.message}")
+                }
+            }
+        })
+
+        // Set up reactive refresh of paired devices (repeats every 500ms for first 5 seconds)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                try {
+                    var refreshCount = 0
+                    while (refreshCount < 10 && isAdded && view != null) {  // Refresh 10 times = 5 seconds total
+                        loadPairedDevices()
+                        delay(500)
+                        refreshCount++
+                    }
+                } catch (e: Exception) {
+                    // Fragment may have been destroyed, silently ignore
+                    android.util.Log.d("Main", "Refresh loop error: ${e.message}")
+                }
+            }
+        }
 
         // Scan button
         binding.btnScan.setOnClickListener {
@@ -262,76 +301,173 @@ class Main : Fragment() {
                 }
             }
         }
+
+        // Cold start / already-granted: scan from lifecycle. First-run grant is handled via
+        // MainActivity.PermissionResultListener (bridge). startScanning() is idempotent via receiver guard.
+        try {
+            if (isAdded && view != null && !isScanning) {
+                android.util.Log.d("Main", "Auto-starting Bluetooth discovery (onViewCreated)")
+                startScanning()
+            }
+        } catch (e: Exception) {
+            android.util.Log.d("Main", "Error auto-starting scan in onViewCreated: ${e.message}")
+        }
     }
 
     @SuppressLint("MissingPermission")
     private fun loadPairedDevices() {
-        pairedDevices.clear()
+        // Safety check: don't access binding if view is destroyed
         try {
-            val devices = BluetoothAdapterWrapper.getInstance()?.pairedDevices ?: emptySet()
-            for (device in devices) {
-                val name = device.name ?: "Unknown"
-                pairedDevices.add(Pair(name, device.address))
+            pairedDevices.clear()
+            try {
+                val devices = BluetoothAdapterWrapper.getInstance()?.pairedDevices ?: emptySet()
+                for (device in devices) {
+                    val name = device.name ?: "Unknown"
+                    pairedDevices.add(Pair(name, device.address))
+                }
+            } catch (e: SecurityException) {
+                // Permission not granted
             }
-        } catch (e: SecurityException) {
-            // Permission not granted
+            
+            // Only update UI if view is still valid
+            if (isAdded && view != null) {
+                pairedAdapter.notifyDataSetChanged()
+                binding.tvNoPaired.visibility = if (pairedDevices.isEmpty()) View.VISIBLE else View.GONE
+            }
+        } catch (e: Exception) {
+            // Fragment may have been destroyed, silently ignore
+            android.util.Log.d("Main", "loadPairedDevices error: ${e.message}")
         }
-        pairedAdapter.notifyDataSetChanged()
+    }
 
-        if (pairedDevices.isEmpty()) {
-            binding.tvNoPaired.visibility = View.VISIBLE
-        } else {
-            binding.tvNoPaired.visibility = View.GONE
+    @SuppressLint("MissingPermission")
+    private fun updateOrAddDevice(device: BluetoothDevice) {
+        val address = device.address
+        if (pairedDevices.any { it.second == address }) return
+        val name = device.name ?: "Unknown Device (${address.takeLast(5)})"
+        val existing = availableByMac[address]
+        if (existing == null) {
+            availableByMac[address] = Pair(name, address)
+            availableDevices.add(Pair(name, address))
+            availableAdapter.notifyItemInserted(availableDevices.size - 1)
+            updateAvailableVisibility()
+        } else if (existing.first != name) {
+            availableByMac[address] = Pair(name, address)
+            val idx = availableDevices.indexOfFirst { it.second == address }
+            if (idx >= 0) {
+                availableDevices[idx] = Pair(name, address)
+                availableAdapter.notifyItemChanged(idx)
+            }
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun startScanning() {
-        val btAdapter = BluetoothAdapterWrapper.getInstance()
-        if (btAdapter == null || btAdapter.isEnabled != true) {
+        if (receiverRegistered) {
+            return
+        }
+
+        val wrapper = BluetoothAdapterWrapper.getInstance()
+        val btAdapter = wrapper?.adapter
+        if (wrapper == null || btAdapter == null || !btAdapter.isEnabled) {
             val intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             enableBluetoothLauncher.launch(intent)
             return
+        }
+
+        // Flush any in-flight inquiry BEFORE registering for DISCOVERY_FINISHED so we don't
+        // tear down UI when cancelDiscovery() broadcasts FINISHED.
+        if (btAdapter.isDiscovering) {
+            btAdapter.cancelDiscovery()
         }
 
         isScanning = true
         binding.btnScan.text = "Stop Scanning"
         binding.scanProgressBar.visibility = View.VISIBLE
 
-        // Show available section
         binding.labelAvailable.visibility = View.VISIBLE
         binding.recyclerAvailable.visibility = View.VISIBLE
         binding.tvNoAvailable.visibility = View.VISIBLE
 
-        // Clear previous scan results
+        availableByMac.clear()
         availableDevices.clear()
         availableAdapter.notifyDataSetChanged()
 
-        // Register receiver
-        val filter = IntentFilter().apply {
-            addAction(BluetoothDevice.ACTION_FOUND)
-            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+        try {
+            val filter = IntentFilter().apply {
+                addAction(BluetoothDevice.ACTION_FOUND)
+                addAction(BluetoothDevice.ACTION_NAME_CHANGED)
+                addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+            }
+            requireContext().registerReceiver(bluetoothReceiver, filter)
+            receiverRegistered = true
+        } catch (e: IllegalArgumentException) {
+            receiverRegistered = true
         }
-        requireContext().registerReceiver(bluetoothReceiver, filter)
 
-        // Start discovery
-        btAdapter.adapter.startDiscovery()
+        val started = try {
+            btAdapter.startDiscovery()
+        } catch (e: Exception) {
+            Log.e(TAG, "startDiscovery threw", e)
+            false
+        }
+
+        if (!started) {
+            Log.e(TAG, "Hardware refused to start discovery — throttling or busy")
+            stopScanningAfterFailedStart()
+            Toast.makeText(
+                context,
+                "Could not start Bluetooth scan. Try again in a moment.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        discoveryTimeoutJob?.cancel()
+        discoveryTimeoutJob = viewLifecycleOwner.lifecycleScope.launch {
+            delay(DISCOVERY_TIMEOUT_MS)
+            if (isAdded && isScanning) {
+                Toast.makeText(context, "Scan timed out", Toast.LENGTH_SHORT).show()
+                stopScanning()
+            }
+        }
+    }
+
+    private fun stopScanningAfterFailedStart() {
+        isScanning = false
+        binding.btnScan.text = "Start Scanning"
+        binding.scanProgressBar.visibility = View.GONE
+        try {
+            if (receiverRegistered) {
+                requireContext().unregisterReceiver(bluetoothReceiver)
+            }
+        } catch (_: IllegalArgumentException) {
+        } finally {
+            receiverRegistered = false
+        }
     }
 
     @SuppressLint("MissingPermission")
     private fun stopScanning() {
+        discoveryTimeoutJob?.cancel()
+        discoveryTimeoutJob = null
+
         isScanning = false
         binding.btnScan.text = "Start Scanning"
         binding.scanProgressBar.visibility = View.GONE
 
         try {
             BluetoothAdapterWrapper.getInstance()?.adapter?.cancelDiscovery()
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
 
         try {
-            requireContext().unregisterReceiver(bluetoothReceiver)
+            if (receiverRegistered) {
+                requireContext().unregisterReceiver(bluetoothReceiver)
+            }
         } catch (_: IllegalArgumentException) {
-            // Receiver not registered
+        } finally {
+            receiverRegistered = false
         }
 
         if (availableDevices.isEmpty()) {
@@ -340,8 +476,14 @@ class Main : Fragment() {
     }
 
     private fun updateAvailableVisibility() {
-        if (availableDevices.isNotEmpty()) {
-            binding.tvNoAvailable.visibility = View.GONE
+        try {
+            // Safety check: only update if view is still valid
+            if (isAdded && view != null && availableDevices.isNotEmpty()) {
+                binding.tvNoAvailable.visibility = View.GONE
+            }
+        } catch (e: Exception) {
+            // Fragment may have been destroyed
+            android.util.Log.d("Main", "updateAvailableVisibility error: ${e.message}")
         }
     }
 
@@ -368,11 +510,29 @@ class Main : Fragment() {
         } catch (_: Exception) {}
     }
 
+    @SuppressLint("MissingPermission")
+    override fun onStart() {
+        super.onStart()
+        // EVENT-BASED: Auto-start scanning when fragment becomes visible
+        // This fires on:
+        // 1. First open (after permissions granted) - onStart fires immediately after onViewCreated
+        // 2. Every subsequent app open - onStart fires when fragment is shown
+        try {
+            if (isAdded && view != null && !isScanning) {
+                android.util.Log.d("Main", "Auto-starting Bluetooth discovery (onStart event)")
+                startScanning()
+            }
+        } catch (e: Exception) {
+            android.util.Log.d("Main", "Error auto-starting scan: ${e.message}")
+        }
+    }
+
     override fun onDestroyView() {
-        super.onDestroyView()
+        (activity as? MainActivity)?.setPermissionListener(null)
         if (isScanning) {
             stopScanning()
         }
+        super.onDestroyView()
     }
 
     private fun showConnectionLogsDialog() {

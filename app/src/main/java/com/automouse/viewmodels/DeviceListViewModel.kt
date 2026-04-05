@@ -60,8 +60,32 @@ class DeviceListViewModel(
         }
     }
 
+    @SuppressLint("MissingPermission")
+    fun loadPairedDevices() {
+        val adapter = com.automouse.networking.bluetooth.BluetoothAdapterWrapper.getInstance()
+        if (adapter == null) {
+            android.util.Log.e("DeviceListViewModel", "BluetoothAdapter not initialized")
+            return
+        }
+
+        val pairedDevices = adapter.pairedDevices
+        android.util.Log.d("DeviceListViewModel", "Loaded ${pairedDevices.size} paired devices")
+        
+        val deviceList = pairedDevices.map {
+            Pair(it.name ?: "Unknown", it.address)
+        }
+        
+        // Always update state, even if list is empty
+        setState(State(deviceList, state.value.isScanning))
+    }
+
     fun resetForScanning() {
         setState(State(emptyList(), isScanning = true))
+    }
+
+    fun startScanning() {
+        // Start scanning WITHOUT clearing existing devices
+        setState(State(state.value.devices, isScanning = true))
     }
 
     fun onScanFinished() {
