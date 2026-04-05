@@ -441,6 +441,11 @@ class ConnectionManager private constructor() : Connection.Listener {
                 
                 addLog("Creating fresh BluetoothConnection instance")
                 
+                // CRITICAL: Reset isRegistering flag for fresh instance
+                // This allows new registration even if early registration set it true
+                isRegistering = false
+                addLog("Reset registration flag for fresh instance")
+                
                 // Step 1: Register HID (fresh instance)
                 registerBluetoothHID(context)
                 
