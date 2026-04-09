@@ -22,7 +22,7 @@ fun Fragment.showPopupDialog(@LayoutRes fragmentId: Int): View? {
         true
     )
 
-    pView.findViewById<MaterialButton>(R.id.btnOK).setOnClickListener {
+    pView.findViewById<MaterialButton>(R.id.btnOK).setOnVibratingClickListener {
         popup.dismiss()
     }
 
@@ -43,4 +43,16 @@ fun PopupWindow.dim(amount: Float) {
     p.flags = p.flags or WindowManager.LayoutParams.FLAG_DIM_BEHIND
     p.dimAmount = amount
     wm.updateViewLayout(container, p)
+}
+
+fun View.setOnVibratingClickListener(action: (View) -> Unit) {
+    this.setOnClickListener {
+        try {
+            it.performHapticFeedback(
+                android.view.HapticFeedbackConstants.VIRTUAL_KEY,
+                android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+            )
+        } catch (_: Exception) {}
+        action(it)
+    }
 }

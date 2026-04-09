@@ -516,9 +516,17 @@ class ConnectionManager private constructor() : Connection.Listener {
         // instead of seeing the stale (closing/closed) connection object.
         val oldConn = btConn
         btConn = null
-        addLog("btConn reference nulled, launching async cleanup")
+        addLog("btConn reference nulled, calling close() immediately")
 
-        // Launch async cleanup for the old connection
+        // CRITICAL: Close synchronously to prevent race conditions where
+        // connection succeeds before async cleanup starts
+        try {
+            oldConn?.close()
+        } catch (e: Exception) {
+            addLog("Error closing connection synchronously: ${e.message}")
+        }
+
+        // Launch async cleanup wait for the old connection
         CoroutineScope(Dispatchers.IO).launch {
             disconnectOldConnection(oldConn)
         }
@@ -548,10 +556,10 @@ class ConnectionManager private constructor() : Connection.Listener {
         }
         
         try {
-            addLog("Starting async cleanup with 2000ms delay")
-            delay(2000)  // Allow async close() operations to complete
-            addLog("Calling oldConn.close() to terminate async cleanup")
+            addLog("Calling oldConn.close() for async cleanup")
             oldConn.close()
+            addLog("Starting async cleanup with 2000ms delay to allow close to finish")
+            delay(2000)  // Allow async close() operations to complete
             addLog("Old connection cleanup completed - marking cleanup as done")
         } catch (e: Exception) {
             addLog("Error during old connection cleanup: ${e.message}")

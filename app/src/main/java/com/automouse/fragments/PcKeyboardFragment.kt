@@ -35,11 +35,11 @@ class PcKeyboardFragment : Fragment() {
         }
 
         // Native Layout Injected Navigation logic
-        view.findViewById<Button>(R.id.btn_drawer_keyboard)?.setOnClickListener {
+        view.findViewById<Button>(R.id.btn_drawer_keyboard)?.setOnVibratingClickListener {
             requireActivity().findViewById<DrawerLayout>(R.id.drawerLayout)?.openDrawer(GravityCompat.START)
             stateManager.clearState() // Avoid stuck keys when opening drawer
         }
-        view.findViewById<Button>(R.id.btn_toggle_keyboard)?.setOnClickListener {
+        view.findViewById<Button>(R.id.btn_toggle_keyboard)?.setOnVibratingClickListener {
             requireActivity().requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             stateManager.clearState()
         }

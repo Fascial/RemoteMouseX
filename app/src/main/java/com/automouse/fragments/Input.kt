@@ -77,11 +77,11 @@ class Input: Fragment() {
 
         // Set navigation listener for the side drawer
         binding.navigation.setCheckedItem(R.id.mode_touchpad)
-        binding.btnOpenDrawer.setOnClickListener {
+        binding.btnOpenDrawer.setOnVibratingClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
         
-        binding.btnTogglePcKeyboard.setOnClickListener {
+        binding.btnTogglePcKeyboard.setOnVibratingClickListener {
             val isPortrait = resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
             
             if (isPortrait) {

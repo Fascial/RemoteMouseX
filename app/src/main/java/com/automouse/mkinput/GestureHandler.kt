@@ -109,7 +109,9 @@ class GestureHandler(
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-                if ((e1?.pointerCount == 2 || e2.pointerCount == 2) || System.currentTimeMillis() - state.lastScrolled < EV_DELAY_MILLIS) {
+                val isEdgeScroll = e1 != null && viewWidth > 0 && e1.x > viewWidth * 0.85f
+
+                if ((e1?.pointerCount == 2 || e2.pointerCount == 2) || System.currentTimeMillis() - state.lastScrolled < EV_DELAY_MILLIS || isEdgeScroll) {
                     if (abs(distanceX) < SCROLL_TRESHOLD && abs(distanceY) < SCROLL_TRESHOLD) {
                         return super.onScroll(e1, e2, distanceX, distanceY)
                     }
@@ -156,8 +158,10 @@ class GestureHandler(
     private val handler = android.os.Handler(Looper.getMainLooper())
     private var singleTapRunnable: Runnable? = null
     private var doubleTapRunnable: Runnable? = null
+    private var viewWidth: Int = 0
 
     override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
+        p0?.let { viewWidth = it.width }
 
         if (p1?.actionMasked == MotionEvent.ACTION_POINTER_UP && p1.pointerCount == 2) {
             if (state.scrolling) {

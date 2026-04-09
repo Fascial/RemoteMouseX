@@ -93,6 +93,25 @@
                     android:id="@+id/touchpadSensor"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                <!-- Edge Scroll Visual Indicators -->
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="46dp"
+                    android:background="#1affffff" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="24dp"
+                    android:src="@drawable/ic_arrow_drop_down"
+                    app:tint="#4dffffff" />
             </FrameLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -187,7 +206,6 @@
                         android:layout_height="56dp"
                         android:layout_marginEnd="6dp"
                         android:layout_weight="1"
-                        android:onClick="@{() -> viewmodel.togglePlayback()}"
                         app:icon="@drawable/ic_play"
                         app:iconGravity="textStart"
                         app:iconPadding="0dp"
@@ -215,7 +233,6 @@
                         android:layout_height="56dp"
                         android:layout_marginStart="6dp"
                         android:layout_weight="1"
-                        android:onClick="@{() -> viewmodel.clearRecording()}"
                         android:text="Clear"
                         android:textColor="#666666" />
                 </LinearLayout>
@@ -280,7 +297,6 @@
                             android:gravity="center"
                             android:textColor="@color/white"
                             android:textSize="20sp"
-                            android:onClick="@{() -> viewmodel.decrementPlaybackInterval()}"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
                             android:focusable="true"/>
@@ -323,7 +339,6 @@
                             android:gravity="center"
                             android:textColor="@color/white"
                             android:textSize="20sp"
-                            android:onClick="@{() -> viewmodel.incrementPlaybackInterval()}"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
                             android:focusable="true"/>

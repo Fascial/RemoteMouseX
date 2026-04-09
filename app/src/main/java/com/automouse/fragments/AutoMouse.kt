@@ -125,22 +125,22 @@ class AutoMouse : Fragment() {
         )
 
         // Preset patterns
-        binding.presetSmoothLinear.setOnClickListener {
+        binding.presetSmoothLinear.setOnVibratingClickListener {
             activePattern = AutoMouseService.PATTERN_SMOOTH_LINEAR
             updatePatternSelectionUI()
             if (isEnabled) updateServiceState()
         }
-        binding.presetCircularTrace.setOnClickListener {
+        binding.presetCircularTrace.setOnVibratingClickListener {
             activePattern = AutoMouseService.PATTERN_CIRCULAR_TRACE
             updatePatternSelectionUI()
             if (isEnabled) updateServiceState()
         }
-        binding.presetErraticJumps.setOnClickListener {
+        binding.presetErraticJumps.setOnVibratingClickListener {
             activePattern = AutoMouseService.PATTERN_ERRATIC_JUMPS
             updatePatternSelectionUI()
             if (isEnabled) updateServiceState()
         }
-        binding.presetPatternRepeat.setOnClickListener {
+        binding.presetPatternRepeat.setOnVibratingClickListener {
             activePattern = AutoMouseService.PATTERN_PATTERN_REPEAT
             updatePatternSelectionUI()
             if (isEnabled) updateServiceState()
@@ -174,7 +174,7 @@ class AutoMouse : Fragment() {
             if (isEnabled) updateServiceState()
         }
         
-        minusBtn.setOnClickListener {
+        minusBtn.setOnVibratingClickListener {
             val current = editText.text.toString().toLongOrNull() ?: initialValue
             val newValue = maxOf(min, current - step)
             editText.setText(newValue.toString())
@@ -182,7 +182,7 @@ class AutoMouse : Fragment() {
             updateSummary()
         }
 
-        minus10Btn.setOnClickListener {
+        minus10Btn.setOnVibratingClickListener {
             val current = editText.text.toString().toLongOrNull() ?: initialValue
             val newValue = maxOf(min, current - largeStep)
             editText.setText(newValue.toString())
@@ -190,7 +190,7 @@ class AutoMouse : Fragment() {
             updateSummary()
         }
 
-        plusBtn.setOnClickListener {
+        plusBtn.setOnVibratingClickListener {
             val current = editText.text.toString().toLongOrNull() ?: initialValue
             val newValue = minOf(max, current + step)
             editText.setText(newValue.toString())
@@ -198,7 +198,7 @@ class AutoMouse : Fragment() {
             updateSummary()
         }
 
-        plus10Btn.setOnClickListener {
+        plus10Btn.setOnVibratingClickListener {
             val current = editText.text.toString().toLongOrNull() ?: initialValue
             val newValue = minOf(max, current + largeStep)
             editText.setText(newValue.toString())
@@ -232,14 +232,14 @@ class AutoMouse : Fragment() {
             updateConfigurationSummary()
             if (isEnabled) updateServiceState()
         }
-        minusBtn.setOnClickListener {
+        minusBtn.setOnVibratingClickListener {
             val current = editText.text.toString().toLongOrNull() ?: initialValue
             val newValue = maxOf(min, current - step)
             editText.setText(newValue.toString())
             onValueChange(newValue)
             updateSummary()
         }
-        plusBtn.setOnClickListener {
+        plusBtn.setOnVibratingClickListener {
             val current = editText.text.toString().toLongOrNull() ?: initialValue
             val newValue = minOf(max, current + step)
             editText.setText(newValue.toString())

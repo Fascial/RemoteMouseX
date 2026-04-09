@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.automouse.R
+import com.automouse.fragments.setOnVibratingClickListener
 import java.util.ArrayList
 
 class DeviceAdapter(
@@ -38,7 +39,7 @@ class DeviceAdapter(
         vh.deviceName.text = name
         vh.deviceAddress.text = address
 
-        vh.wrapper.setOnClickListener {
+        vh.wrapper.setOnVibratingClickListener {
             listener.onItemClick(name, address)
         }
 

@@ -123,7 +123,11 @@ class BluetoothConnection(
                 BluetoothProfile.STATE_CONNECTED -> {
                     connectionEstablished = true
                     Log.d(TAG, "Connected to ${bluetoothHostDevice?.name}")
-                    listener.onConnected(Mode.BLUETOOTH, bluetoothHostDevice?.name ?: "Unknown device")
+                    if (!isClosing && !isClosed) {
+                        listener.onConnected(Mode.BLUETOOTH, bluetoothHostDevice?.name ?: "Unknown device")
+                    } else {
+                        Log.d(TAG, "Connection ignored because connection is closing")
+                    }
                 }
 
                 BluetoothProfile.STATE_DISCONNECTING -> {

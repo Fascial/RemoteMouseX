@@ -42,7 +42,7 @@ class Recorder : Fragment() {
         binding.touchpadSensor.setOnTouchListener(gestureHandler)
 
         // Record action with Haptic feedback
-        binding.btnRecord.setOnClickListener {
+        binding.btnRecord.setOnVibratingClickListener {
             val vibrator = requireContext().getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 vibrator.vibrate(android.os.VibrationEffect.createOneShot(50, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
@@ -100,7 +100,7 @@ class Recorder : Fragment() {
         }
 
         // Button click handlers
-        binding.btnSave.setOnClickListener {
+        binding.btnSave.setOnVibratingClickListener {
             if (viewModel.saveRecording(requireContext())) {
                 android.widget.Toast.makeText(
                     requireContext(),
@@ -117,8 +117,18 @@ class Recorder : Fragment() {
             }
         }
 
-        binding.btnClearRecording.setOnClickListener {
+        binding.btnClearRecording.setOnVibratingClickListener {
             viewModel.clearRecording()
+        }
+
+        binding.btnPlayback.setOnVibratingClickListener {
+            viewModel.togglePlayback()
+        }
+        binding.btnIntervalMinus.setOnVibratingClickListener {
+            viewModel.decrementPlaybackInterval()
+        }
+        binding.btnIntervalPlus.setOnVibratingClickListener {
+            viewModel.incrementPlaybackInterval()
         }
 
         // Saved recordings observer
@@ -188,7 +198,7 @@ class Recorder : Fragment() {
 
                 val loadButton = android.widget.Button(requireContext()).apply {
                     text = "Load"
-                    setOnClickListener {
+                    setOnVibratingClickListener {
                         if (viewModel.loadRecording(requireContext(), filename)) {
                             android.widget.Toast.makeText(
                                 requireContext(),
@@ -212,7 +222,7 @@ class Recorder : Fragment() {
 
                 val deleteButton = android.widget.Button(requireContext()).apply {
                     text = "Delete"
-                    setOnClickListener {
+                    setOnVibratingClickListener {
                         if (viewModel.deleteRecording(requireContext(), filename)) {
                             viewModel.refreshSavedRecordings(requireContext())
                             android.widget.Toast.makeText(

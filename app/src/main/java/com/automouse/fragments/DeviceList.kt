@@ -124,7 +124,7 @@ class DeviceList : Fragment() {
         })
         binding.recyclerView.adapter = deviceAdapter
 
-        binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
+        binding.btnBack.setOnVibratingClickListener { parentFragmentManager.popBackStack() }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -155,12 +155,22 @@ class DeviceList : Fragment() {
                             is ConnectionViewModel.State.Connecting -> {
                                 if (!loadingPopup.isShowing) {
                                     loadingPopup.contentView.findViewById<TextView>(R.id.loadingMessage).text = it.message
+                                    val cancelBtn = loadingPopup.contentView.findViewById<android.widget.Button>(R.id.cancelButton)
+                                    cancelBtn?.visibility = View.VISIBLE
+                                    cancelBtn?.setOnVibratingClickListener {
+                                        connectionViewModel.disconnect()
+                                    }
                                     loadingPopup.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
                                 }
                             }
                             is ConnectionViewModel.State.AutoConnecting -> {
                                 if (!loadingPopup.isShowing) {
                                     loadingPopup.contentView.findViewById<TextView>(R.id.loadingMessage).text = "Reconnecting to ${it.deviceName}..."
+                                    val cancelBtn = loadingPopup.contentView.findViewById<android.widget.Button>(R.id.cancelButton)
+                                    cancelBtn?.visibility = View.VISIBLE
+                                    cancelBtn?.setOnVibratingClickListener {
+                                        connectionViewModel.cancelAutoConnect()
+                                    }
                                     loadingPopup.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
                                 }
                             }

@@ -196,6 +196,7 @@ class RecorderViewModel : BaseViewModel<RecorderViewModel.State, RecorderViewMod
     }
 
     fun onMouseButtonClick(view: View) {
+        try { view.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY, android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING) } catch (_: Exception) {}
         val button = when (view.id) {
             com.automouse.R.id.btnLeftClick -> InputEvent.MouseButton.LEFT
             com.automouse.R.id.btnRightClick -> InputEvent.MouseButton.RIGHT

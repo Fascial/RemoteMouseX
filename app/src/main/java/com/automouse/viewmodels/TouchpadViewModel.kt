@@ -55,10 +55,10 @@ class TouchpadViewModel: BaseViewModel<TouchpadViewModel.State, TouchpadViewMode
 
     fun onMediaButtonClick(view: View) {
         try {
-            // Vibrate and highlight button
-            vibrateButton()
+            view.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY, android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
             highlightButton(view)
             view.postDelayed({ resetButtonHighlight(view) }, 100)
+        } catch (_: Exception) {}
         
         when(view.id) {
             R.id.btnPrev -> {
@@ -92,11 +92,10 @@ class TouchpadViewModel: BaseViewModel<TouchpadViewModel.State, TouchpadViewMode
                 connectionManager.send(arrowLeft)
             }
         }
-        } catch (_: Exception) {
-        }
     }
 
     fun onMouseButtonClick(view: View) {
+        try { view.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY, android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING) } catch (_: Exception) {}
         when(view.id) {
             R.id.btnLeftClick -> connectionManager.send(InputEvent.MouseClick(InputEvent.MouseButton.LEFT))
             R.id.btnRightClick -> connectionManager.send(InputEvent.MouseClick(InputEvent.MouseButton.RIGHT))

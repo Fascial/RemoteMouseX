@@ -174,7 +174,7 @@ class Main : Fragment() {
         }
 
         // Scan button
-        binding.btnScan.setOnClickListener {
+        binding.btnScan.setOnVibratingClickListener {
             if (isScanning) {
                 stopScanning()
             } else {
@@ -183,7 +183,7 @@ class Main : Fragment() {
         }
 
         // Drawer
-        binding.btnOpenDrawer.setOnClickListener {
+        binding.btnOpenDrawer.setOnVibratingClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
 
@@ -228,8 +228,12 @@ class Main : Fragment() {
                         when (it) {
                             is ConnectionViewModel.State.Connecting -> {
                                 if (!loadingPopup.isShowing) {
+                                    val cancelBtn = loadingPopup.contentView.findViewById<android.widget.Button>(R.id.cancelButton)
                                     loadingPopup.contentView.findViewById<TextView>(R.id.loadingMessage).text = it.message
-                                    loadingPopup.contentView.findViewById<android.widget.Button>(R.id.cancelButton)?.visibility = View.GONE
+                                    cancelBtn?.visibility = View.VISIBLE
+                                    cancelBtn?.setOnVibratingClickListener {
+                                        viewModel.disconnect()
+                                    }
                                     loadingPopup.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
                                 }
                             }
@@ -250,7 +254,7 @@ class Main : Fragment() {
                                     val cancelBtn = loadingPopup.contentView.findViewById<android.widget.Button>(R.id.cancelButton)
                                     loadingPopup.contentView.findViewById<TextView>(R.id.loadingMessage).text = "Reconnecting to ${it.deviceName}..."
                                     cancelBtn?.visibility = View.VISIBLE
-                                    cancelBtn?.setOnClickListener {
+                                    cancelBtn?.setOnVibratingClickListener {
                                         viewModel.cancelAutoConnect()
                                     }
                                     loadingPopup.showAtLocation(binding.root, Gravity.CENTER, 0, 0)

@@ -44,7 +44,7 @@ class Touchpad : Fragment() {
         binding.touchpadSensor.setOnTouchListener(gestureHandler)
 
         // Multimedia dropdown
-        binding.btnToggleMedia.setOnClickListener {
+        binding.btnToggleMedia.setOnVibratingClickListener {
             TransitionManager.beginDelayedTransition(binding.root as ViewGroup)
 
             val isHidden = binding.mediaControls.isGone
@@ -52,19 +52,6 @@ class Touchpad : Fragment() {
             binding.btnToggleMedia.setIconResource(
                 if (isHidden) R.drawable.ic_arrow_drop_up else R.drawable.ic_arrow_drop_down
             )
-        }
-
-        // Touchpad fullscreen toggle
-        binding.btnFullscreen.setOnClickListener {
-            val currentOrientation = requireActivity().requestedOrientation
-
-            if(currentOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                updateLayoutForOrientation(false)
-            } else {
-                requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                updateLayoutForOrientation(true)
-            }
         }
     }
 
@@ -74,50 +61,4 @@ class Touchpad : Fragment() {
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 
-    private fun updateLayoutForOrientation(landscape: Boolean) {
-        val rootLayout = binding.root as ConstraintLayout
-        val container = binding.touchpadContainer
-        val params = container.layoutParams as ConstraintLayout.LayoutParams
-
-        val marginTopPx = (24 * resources.displayMetrics.density).toInt()
-        val marginBottomPx = (16 * resources.displayMetrics.density).toInt()
-        val rootPaddingPx = (16 * resources.displayMetrics.density).toInt()
-
-        if (landscape) {
-            rootLayout.setPadding(0, 0, 0, 0)
-
-            // Expand to fill the screen
-            params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
-            params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-            params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-            params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-            params.setMargins(0, 0, 0, 0)
-
-            // Remove all other buttons
-            binding.title.visibility = View.GONE
-            binding.mouseButtonsRow.visibility = View.GONE
-            binding.btnToggleMedia.visibility = View.GONE
-            binding.mediaControls.visibility = View.GONE
-            binding.btnFullscreen.setIconResource(R.drawable.ic_fullscreen_exit)
-        } else {
-            rootLayout.setPadding(rootPaddingPx, rootPaddingPx, rootPaddingPx, rootPaddingPx)
-
-            // Set the layout params for portrait mode
-            params.topToBottom = R.id.title
-            params.bottomToTop = R.id.mouseButtonsRow
-            params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-            params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-            params.topMargin = marginTopPx
-            params.bottomMargin = marginBottomPx
-
-            // Make everything else visible again
-            binding.title.visibility = View.VISIBLE
-            binding.mouseButtonsRow.visibility = View.VISIBLE
-            binding.btnToggleMedia.visibility = View.VISIBLE
-            binding.mediaControls.visibility = View.VISIBLE
-            binding.btnFullscreen.setIconResource(R.drawable.ic_fullscreen)
-        }
-
-        container.layoutParams = params
-    }
 }
